@@ -17,12 +17,14 @@ AETHER lets users input a direct audio file link. Once the link is provided, the
 Open the webplayer in your browser, paste a valid audio URL into the input field, and press play. The audio will begin streaming immediately.
 
 ⚠️ Important Notes
+
   just past the url in the top bar hit enter and enjoy you music 
-  !Warning we made the player Show Youtube and spotify Ur hate We hate oyu for forcing ads 
-  No good Platfrom force the user to see ads!
+  We hate Forced ads !
+
 💡 Future Improvements
-Playlist functionality
-Drag and drop support
-Audio visual effects
-Dark mode
-Mobile optimization
+
+ optimizations 
+ Custom mp4 support over Url
+ More settings 
+ Bug and error fixes
+ more later!
