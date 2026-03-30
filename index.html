@@ -12,6 +12,9 @@
             --glass: rgba(0, 0, 0, 0.96);
             --font-logo: 'Cinzel Decorative', serif;
             --font-jp: 'Noto Sans JP', sans-serif;
+            --bg-bright: 0.4;
+            --bg-sat: 1.2;
+            --bg-zoom: 1.05;
         }
         
         body, html { 
@@ -20,12 +23,15 @@
             background: #000; overflow: hidden; touch-action: manipulation;
         }
 
+        /* FIXED VIDEO ENGINE */
         #video-bg {
             position: fixed; right: 0; bottom: 0;
             min-width: 100%; min-height: 100%;
+            width: 100vw; height: 100vh;
             z-index: -2; object-fit: cover;
-            filter: brightness(0.4) contrast(1.1);
-            transition: 0.5s filter;
+            filter: brightness(var(--bg-bright)) contrast(1.1) saturate(var(--bg-sat));
+            transform: scale(var(--bg-zoom));
+            transition: 0.4s filter, 0.4s transform;
         }
 
         .vignette {
@@ -85,36 +91,36 @@
         .scrub-box { width: 100%; max-width: 600px; display: flex; align-items: center; gap: 12px; font-family: monospace; font-size: 12px; color: #444; }
         #scrub { flex: 1; accent-color: var(--accent); cursor: pointer; }
 
-        /* USEFUL SETTINGS MODAL */
-        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; }
-        .modal-box { width: 100%; max-width: 500px; border: 1px solid var(--accent); padding: 40px; background: #000; max-height: 90vh; overflow-y: auto; }
+        /* ADVANCED SETTINGS MODAL */
+        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.97); align-items: center; justify-content: center; padding: 20px; }
+        .modal-box { width: 100%; max-width: 500px; border: 1px solid var(--accent); padding: 40px; background: #000; box-shadow: 0 0 50px rgba(255,0,51,0.2); max-height: 90vh; overflow-y: auto; scrollbar-width: none; }
         
         .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #111; }
-        .setting-row label { font-size: 12px; letter-spacing: 2px; color: #888; font-weight: 900; }
+        .setting-row label { font-size: 10px; letter-spacing: 2px; color: #666; font-weight: 900; text-transform: uppercase; }
         
-        .input-mini { background: #111; border: 1px solid #333; color: white; padding: 8px; font-size: 11px; width: 180px; outline: none; }
-        .input-mini:focus { border-color: var(--accent); }
+        .input-mini { background: #080808; border: 1px solid #222; color: white; padding: 10px; font-size: 11px; width: 220px; outline: none; border-left: 2px solid var(--accent); }
+        .input-mini:focus { border-color: var(--accent); background: #000; }
 
-        .toggle-btn { background: #111; border: 1px solid #333; color: #444; padding: 8px 15px; cursor: pointer; font-size: 10px; font-weight: 900; }
-        .toggle-btn.on { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(255,0,51,0.2); }
+        .credits-list { background: #050505; border-left: 3px solid var(--accent); padding: 15px; font-family: monospace; font-size: 10px; color: #444; line-height: 2; margin-bottom: 20px; }
+        .credits-list b { color: var(--accent); }
     </style>
 </head>
 <body onclick="forceStart()">
 
-    <video autoplay muted loop playsinline id="video-bg">
-        <source src="Akatsuki.mp4" type="video/mp4">
+    <video autoplay muted loop playsinline id="video-bg" poster="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
+        <source src="https://motionbgs.com/media/893/akatsuki-naruto.960x540.mp4" type="video/mp4">
     </video>
     <div class="vignette"></div>
 
     <div class="main-ui">
         <header>
             <div class="branding"><h1>AETHER</h1></div>
-            <button class="sys-btn" onclick="openM()">SETTINGS</button>
+            <button class="sys-btn" onclick="openM()">SYSTEM CONFIG</button>
         </header>
 
         <main>
             <div class="search-wrap">
-                <input type="text" class="search-bar" id="si" placeholder="URL OR SONG NAME (ENTER)" onkeydown="if(event.key==='Enter') startSearch(this.value)">
+                <input type="text" class="search-bar" id="si" placeholder="YOU SONG OR URL LINK HERE (HIT ENTER!)" onkeydown="if(event.key==='Enter') startSearch(this.value)">
             </div>
             <div class="scroll-area" id="grid"></div>
         </main>
@@ -124,7 +130,7 @@
                 <img id="track-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
                 <div>
                     <div id="track-name" style="font-weight:900;">READY</div>
-                    <div id="status-tag" style="font-size:10px; color:var(--accent); letter-spacing:2px;">AKATSUKI_ONLINE</div>
+                    <div id="status-tag" style="font-size:10px; color:var(--accent); letter-spacing:2px; font-weight:900;">STATION: ONLINE</div>
                 </div>
             </div>
 
@@ -151,35 +157,45 @@
 
     <div id="settings" class="modal">
         <div class="modal-box">
-            <h2 style="font-family:var(--font-logo); color:var(--accent); margin:0 0 25px 0;">SYSTEM CONFIG</h2>
+            <h2 style="font-family:var(--font-logo); color:var(--accent); margin-bottom:20px;">SYSTEM LOGS</h2>
+            <div class="credits-list">
+                CORE: <b>SHYSOKUN</b> | HUD: <b>VIPBUSTED</b><br>
+                TESTER: <b>KORMATTO</b> | VERSION: <b>v23</b>
+            </div>
+
+            <h2 style="font-family:var(--font-logo); color:var(--accent); font-size:14px; border-bottom:1px solid #222; padding-bottom:10px;">TACTICAL SETTINGS</h2>
             
             <div class="setting-row">
-                <label>BG VIDEO URL</label>
-                <input type="text" class="input-mini" id="bg-url" placeholder="Paste .mp4 link..." onchange="updateBG(this.value)">
+                <label>AUTO-PLAY URL</label>
+                <input type="text" class="input-mini" id="quick-url" placeholder="Paste YouTube Link..." onchange="quickPlay(this.value)">
             </div>
 
             <div class="setting-row">
-                <label>CINEMATIC BRIGHTNESS</label>
-                <input type="range" min="10" max="100" value="40" oninput="adjBright(this.value)">
+                <label>BG VIDEO (.MP4)</label>
+                <input type="text" class="input-mini" id="bg-url" placeholder="Paste .mp4 Link..." onchange="updateBG(this.value)">
             </div>
 
             <div class="setting-row">
-                <label>AUTO-LOOP SONG</label>
-                <button class="toggle-btn" id="loop-tog" onclick="toggleLoop()">OFF</button>
+                <label>UI GLASS OPACITY</label>
+                <input type="range" min="50" max="100" value="96" oninput="adj('glass', this.value)">
             </div>
 
             <div class="setting-row">
-                <label>UI VIGNETTE</label>
-                <button class="toggle-btn on" id="vig-tog" onclick="toggleVig()">ON</button>
+                <label>BG ZOOM LEVEL</label>
+                <input type="range" min="100" max="130" value="105" oninput="adj('zoom', this.value)">
             </div>
 
             <div class="setting-row">
-                <label>AUDIO NORMALIZER</label>
-                <button class="toggle-btn" onclick="this.classList.toggle('on')">ON</button>
+                <label>BG SATURATION</label>
+                <input type="range" min="0" max="200" value="120" oninput="adj('sat', this.value)">
             </div>
 
-            <button class="sys-btn" style="width:100%; margin-top:30px;" onclick="closeM()">SAVE CHANGES</button>
-            <p style="font-size:9px; color:#444; margin-top:15px; text-align:center;">AETHER OMEGA v21 // STABLE BUILD</p>
+            <div class="setting-row">
+                <label>STATION SLEEP</label>
+                <button class="sys-btn" style="padding: 5px 15px; font-size:9px;" onclick="location.reload()">REBOOT</button>
+            </div>
+
+            <button class="sys-btn" style="width:100%; margin-top:30px; border-color:white; color:white;" onclick="closeM()">CLOSE TERMINAL</button>
         </div>
     </div>
 
@@ -210,48 +226,55 @@
             });
         }
 
-        // USEFUL SETTING FUNCTIONS
-        function updateBG(url) { if(url) document.getElementById('video-bg').src = url; }
-        function adjBright(v) { document.getElementById('video-bg').style.filter = `brightness(${v/100}) contrast(1.1)`; }
-        function toggleVig() { 
-            const v = document.querySelector('.vignette');
-            const b = document.getElementById('vig-tog');
-            v.style.display = v.style.display === 'none' ? 'block' : 'none';
-            b.classList.toggle('on');
+        // AUTO-PLAY FEATURE
+        function quickPlay(url) {
+            const vidMatch = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+            if(vidMatch) { 
+                yt.loadVideoById(vidMatch[1]); 
+                closeM(); 
+                document.getElementById('quick-url').value = '';
+            }
+        }
+
+        // FIXED BACKGROUND UPDATE
+        function updateBG(url) { 
+            if(!url) return;
+            const v = document.getElementById('video-bg');
+            v.src = url;
+            v.load();
+            v.play().catch(e => console.log("Video Load Error"));
+        }
+        
+        function adj(type, v) {
+            const el = document.getElementById('video-bg');
+            if(type === 'zoom') el.style.transform = `scale(${v/100})`;
+            if(type === 'sat') el.style.filter = `brightness(var(--bg-bright)) contrast(1.1) saturate(${v/100})`;
+            if(type === 'glass') document.documentElement.style.setProperty('--glass', `rgba(0,0,0,${v/100})`);
         }
 
         function toggleLoop() {
             isLooping = !isLooping;
             document.getElementById('loop-btn').style.color = isLooping ? 'var(--accent)' : '#333';
-            document.getElementById('loop-tog').classList.toggle('on');
-            document.getElementById('loop-tog').innerText = isLooping ? 'ON' : 'OFF';
         }
 
         function update() {
             if (yt && yt.getCurrentTime) {
                 const c = yt.getCurrentTime(), t = yt.getDuration();
-                document.getElementById('scrub').max = t;
-                document.getElementById('scrub').value = c;
-                document.getElementById('c-time').innerText = fmt(c);
-                document.getElementById('t-time').innerText = fmt(t);
+                document.getElementById('scrub').max = t; document.getElementById('scrub').value = c;
+                document.getElementById('c-time').innerText = fmt(c); document.getElementById('t-time').innerText = fmt(t);
             }
         }
 
-        function fmt(s) {
-            const m = Math.floor(s/60), sc = Math.floor(s%60);
-            return `${m}:${sc < 10 ? '0' : ''}${sc}`;
-        }
+        function fmt(s) { const m = Math.floor(s/60), sc = Math.floor(s%60); return `${m}:${sc < 10 ? '0' : ''}${sc}`; }
 
         async function startSearch(q) {
             const vidMatch = q.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
             if(vidMatch) { yt.loadVideoById(vidMatch[1]); return; }
-
             for (let b of bases) {
                 try {
                     const r = await fetch(`${b}/search?q=${encodeURIComponent(q)}&filter=music_songs`);
                     const d = await r.json();
-                    const g = document.getElementById('grid');
-                    g.innerHTML = '';
+                    const g = document.getElementById('grid'); g.innerHTML = '';
                     d.items.slice(0, 12).forEach(i => {
                         const div = document.createElement('div');
                         div.className = 'card';
