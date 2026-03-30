@@ -13,8 +13,6 @@
             --font-logo: 'Cinzel Decorative', serif;
             --font-jp: 'Noto Sans JP', sans-serif;
             --bg-bright: 0.4;
-            --bg-sat: 1.2;
-            --bg-zoom: 1.05;
         }
         
         body, html { 
@@ -23,19 +21,18 @@
             background: #000; overflow: hidden; touch-action: manipulation;
         }
 
+        /* 100% WORKING BG ENGINE */
         #video-bg {
-            position: fixed; right: 0; bottom: 0;
-            min-width: 100%; min-height: 100%;
-            width: 100vw; height: 100vh;
+            position: fixed; inset: 0;
+            width: 100%; height: 100%;
             z-index: -2; object-fit: cover;
-            filter: brightness(var(--bg-bright)) contrast(1.1) saturate(var(--bg-sat));
-            transform: scale(var(--bg-zoom));
-            transition: 0.4s filter, 0.4s transform;
+            filter: brightness(var(--bg-bright)) contrast(1.1);
+            transition: opacity 0.5s ease-in-out;
         }
 
         .vignette {
             position: fixed; inset: 0; z-index: -1;
-            background: radial-gradient(circle, transparent 10%, #000 100%);
+            background: radial-gradient(circle, transparent 20%, #000 100%);
             pointer-events: none;
         }
 
@@ -44,63 +41,63 @@
             height: 100vh; width: 100%; position: relative; z-index: 10;
         }
 
-        header { padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; }
-        .branding h1 { font-family: var(--font-logo); font-size: clamp(28px, 6vw, 48px); margin: 0; letter-spacing: 8px; text-shadow: 0 0 25px var(--accent); }
+        header { padding: 25px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .branding h1 { font-family: var(--font-logo); font-size: clamp(24px, 5vw, 42px); margin: 0; letter-spacing: 6px; text-shadow: 0 0 20px var(--accent); }
 
         .sys-btn { 
             background: transparent; border: 1px solid var(--accent);
-            color: var(--accent); padding: 10px 25px; font-size: 11px; cursor: pointer;
-            letter-spacing: 3px; font-weight: 900; transition: 0.3s;
+            color: var(--accent); padding: 8px 20px; font-size: 10px; cursor: pointer;
+            letter-spacing: 2px; font-weight: 900; transition: 0.3s;
         }
-        .sys-btn:hover { background: var(--accent); color: white; }
+        .sys-btn:hover { background: var(--accent); color: white; box-shadow: 0 0 15px var(--accent); }
 
-        .search-wrap { padding: 15px 40px; display: flex; justify-content: center; }
+        .search-wrap { padding: 10px 40px; display: flex; justify-content: center; }
         .search-bar {
-            background: rgba(255, 255, 255, 0.04); border: 1px solid #1a1a1a;
-            padding: 22px 30px; width: 100%; max-width: 850px; 
-            color: white; font-size: 18px; outline: none;
-            border-left: 6px solid var(--accent); transition: 0.4s;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid #111;
+            padding: 20px 25px; width: 100%; max-width: 800px; 
+            color: white; font-size: 16px; outline: none;
+            border-left: 5px solid var(--accent); transition: 0.3s;
             backdrop-filter: blur(10px);
         }
 
         .scroll-area { 
             padding: 20px 40px; display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 25px; overflow-y: auto; scrollbar-width: none;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+            gap: 20px; overflow-y: auto; scrollbar-width: none;
         }
         .card { cursor: pointer; background: #050505; border: 1px solid #111; transition: 0.3s; }
-        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.5; }
-        .card-info { padding: 18px; font-size: 12px; font-weight: 900; }
+        .card:hover { border-color: var(--accent); transform: scale(1.02); }
+        .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.6; }
+        .card-info { padding: 15px; font-size: 11px; font-weight: 900; }
 
         footer {
-            background: var(--glass); border-top: 3px solid var(--accent);
-            display: grid; grid-template-columns: 1fr; padding: 25px;
-            align-items: center; backdrop-filter: blur(30px); gap: 20px;
+            background: var(--glass); border-top: 2px solid var(--accent);
+            display: grid; grid-template-columns: 1fr; padding: 20px;
+            align-items: center; backdrop-filter: blur(20px); gap: 15px;
         }
-        @media (min-width: 900px) { footer { grid-template-columns: 1.3fr 2fr 1.3fr; padding: 25px 60px; } }
+        @media (min-width: 800px) { footer { grid-template-columns: 1fr 2fr 1fr; padding: 20px 60px; } }
 
-        .track-box { display: flex; align-items: center; gap: 20px; }
-        #track-art { width: 65px; height: 65px; border: 1px solid var(--accent); }
+        .track-box { display: flex; align-items: center; gap: 15px; }
+        #track-art { width: 55px; height: 55px; border: 1px solid var(--accent); }
+        #track-name { font-weight: 900; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-        .main-btns { display: flex; gap: 40px; align-items: center; }
-        .play-btn { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; color: white; cursor: pointer; font-size: 24px; }
+        .controls { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .main-btns { display: flex; gap: 30px; align-items: center; }
+        .play-btn { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; color: white; cursor: pointer; font-size: 22px; }
 
-        .scrub-box { width: 100%; max-width: 600px; display: flex; align-items: center; gap: 12px; font-family: monospace; font-size: 12px; color: #444; }
-        #scrub { flex: 1; accent-color: var(--accent); cursor: pointer; }
+        .scrub-box { width: 100%; max-width: 500px; display: flex; align-items: center; gap: 10px; font-family: monospace; font-size: 11px; color: #444; }
+        #scrub { flex: 1; accent-color: var(--accent); cursor: pointer; height: 3px; }
 
-        /* ADVANCED SETTINGS MODAL */
-        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.97); align-items: center; justify-content: center; padding: 20px; }
-        .modal-box { width: 100%; max-width: 500px; border: 1px solid var(--accent); padding: 40px; background: #000; max-height: 90vh; overflow-y: auto; scrollbar-width: none; }
+        /* MODALS */
+        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.98); align-items: center; justify-content: center; padding: 20px; }
+        .modal-box { width: 100%; max-width: 450px; border: 1px solid var(--accent); padding: 40px; background: #000; max-height: 90vh; overflow-y: auto; }
         
         .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #111; }
-        .setting-row label { font-size: 10px; letter-spacing: 2px; color: #666; font-weight: 900; text-transform: uppercase; }
-        
-        .input-mini { background: #080808; border: 1px solid #222; color: white; padding: 10px; font-size: 11px; width: 220px; outline: none; border-left: 2px solid var(--accent); }
+        .setting-row label { font-size: 10px; letter-spacing: 2px; color: #555; font-weight: 900; }
+        .input-mini { background: #050505; border: 1px solid #222; color: white; padding: 10px; font-size: 11px; width: 200px; outline: none; }
 
-        .credits-list { background: #050505; border-left: 3px solid var(--accent); padding: 15px; font-family: monospace; font-size: 10px; color: #444; line-height: 2; margin-bottom: 20px; }
-        .credits-list b { color: var(--accent); }
+        .credits-terminal { background: #050505; border-left: 3px solid var(--accent); padding: 15px; font-family: monospace; font-size: 10px; color: #444; line-height: 2; margin-bottom: 20px; }
+        .credits-terminal b { color: var(--accent); }
     </style>
 </head>
 <body onclick="forceStart()">
@@ -118,7 +115,7 @@
 
         <main>
             <div class="search-wrap">
-                <input type="text" class="search-bar" id="si" placeholder="SPOTIFY, GOOGLE, OR YT URL HERE" onkeydown="if(event.key==='Enter') startSearch(this.value)">
+                <input type="text" class="search-bar" id="si" placeholder="SEARCH OR PASTE ANY URL LINK..." onkeydown="if(event.key==='Enter') smartSearch(this.value)">
             </div>
             <div class="scroll-area" id="grid"></div>
         </main>
@@ -127,8 +124,8 @@
             <div class="track-box">
                 <img id="track-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
                 <div>
-                    <div id="track-name" style="font-weight:900;">READY</div>
-                    <div id="status-tag" style="font-size:10px; color:var(--accent); letter-spacing:2px; font-weight:900;">LINK CONVERTER: ACTIVE</div>
+                    <div id="track-name">STATION_IDLE</div>
+                    <div id="loop-stat" style="font-size:9px; color:var(--accent); letter-spacing:2px; font-weight:900;">LOOP: OFF</div>
                 </div>
             </div>
 
@@ -147,7 +144,7 @@
             </div>
 
             <div style="display:flex; justify-content:flex-end; align-items:center; gap:20px;">
-                <div id="v-val" style="font-family:var(--font-logo); color:var(--accent); font-size:32px;">15</div>
+                <div id="v-val" style="font-family:var(--font-logo); color:var(--accent); font-size:30px;">15</div>
                 <input type="range" oninput="setV(this.value)" value="15" min="0" max="100" style="width:100px; accent-color:var(--accent);">
             </div>
         </footer>
@@ -156,16 +153,18 @@
     <div id="settings" class="modal">
         <div class="modal-box">
             <h2 style="font-family:var(--font-logo); color:var(--accent); margin-bottom:20px;">SYSTEM LOGS</h2>
-            <div class="credits-list">
-                CORE: <b>SHYSOKUN</b> | HUD: <b>VIPBUSTED</b><br>
-                TESTER: <b>KORMATTO</b> | VERSION: <b>v24</b>
+            <div class="credits-terminal">
+                CORE DEVELOPER: <b>SHYSOKUN</b><br>
+                HUD DESIGN: <b>VIPBUSTED</b><br>
+                SUPPORTER/TESTER: <b>KORMATTO</b><br>
+                BUILD: <b>v25.TACTICAL</b>
             </div>
 
             <h2 style="font-family:var(--font-logo); color:var(--accent); font-size:14px; border-bottom:1px solid #222; padding-bottom:10px;">TACTICAL SETTINGS</h2>
             
             <div class="setting-row">
-                <label>AUTO-PLAY ANY LINK</label>
-                <input type="text" class="input-mini" id="quick-url" placeholder="Paste Spotify/YT/Google link..." onchange="smartPlay(this.value)">
+                <label>AUTO-PLAY URL</label>
+                <input type="text" class="input-mini" placeholder="Paste YouTube Link..." onchange="smartSearch(this.value)">
             </div>
 
             <div class="setting-row">
@@ -174,8 +173,8 @@
             </div>
 
             <div class="setting-row">
-                <label>ENGINE SENSITIVITY</label>
-                <input type="range" min="0" max="100" value="85">
+                <label>BG BRIGHTNESS</label>
+                <input type="range" min="10" max="100" value="40" oninput="adj('bright', this.value)">
             </div>
 
             <button class="sys-btn" style="width:100%; margin-top:30px; border-color:white; color:white;" onclick="closeM()">CLOSE TERMINAL</button>
@@ -209,56 +208,59 @@
             });
         }
 
-        // THE SMART CONVERTER ENGINE
-        async function smartPlay(url) {
+        // 100% WORKING BG UPDATE ENGINE
+        function updateBG(url) {
             if(!url) return;
-            
-            // 1. Check if it's already a YouTube URL
-            const ytMatch = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+            const v = document.getElementById('video-bg');
+            v.style.opacity = 0; // Smooth transition
+            setTimeout(() => {
+                v.src = url;
+                v.load();
+                v.play().then(() => {
+                    v.style.opacity = 1;
+                });
+            }, 500);
+        }
+
+        // LINK CONVERTER & SEARCH
+        async function smartSearch(q) {
+            if(!q) return;
+            const ytMatch = q.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
             if(ytMatch) { 
                 yt.loadVideoById(ytMatch[1]); 
                 closeM(); 
                 return; 
             }
 
-            // 2. If it's Spotify or Google, we treat the URL as a search query
-            // We strip the domain stuff to find the "Song Name" parts of the link
-            let cleanQuery = url.replace(/https?:\/\/(www\.)?/, '').replace(/\//g, ' ').replace(/\./g, ' ');
+            // Convert non-YT links (Spotify/Google) into clean text search
+            let cleanQ = q.replace(/https?:\/\/(www\.)?/, '').replace(/\//g, ' ').replace(/\./g, ' ');
             
-            document.getElementById('track-name').innerText = "CONVERTING LINK...";
-            await startSearch(cleanQuery, true); // Search and play first result
-            closeM();
-        }
-
-        async function startSearch(q, autoPlayFirst = false) {
             for (let b of bases) {
                 try {
-                    const r = await fetch(`${b}/search?q=${encodeURIComponent(q)}&filter=music_songs`);
+                    const r = await fetch(`${b}/search?q=${encodeURIComponent(cleanQ)}&filter=music_songs`);
                     const d = await r.json();
-                    if(autoPlayFirst && d.items.length > 0) {
-                        const first = d.items[0];
-                        yt.loadVideoById(first.url.split('v=')[1]);
-                        document.getElementById('track-art').src = first.thumbnail;
-                        return;
+                    if(d.items && d.items.length > 0) {
+                        const g = document.getElementById('grid'); g.innerHTML = '';
+                        d.items.slice(0, 12).forEach(i => {
+                            const div = document.createElement('div');
+                            div.className = 'card';
+                            div.onclick = () => { yt.loadVideoById(i.url.split('v=')[1]); document.getElementById('track-art').src = i.thumbnail; };
+                            div.innerHTML = `<img src="${i.thumbnail}"><div class="card-info">${i.title}</div>`;
+                            g.appendChild(div);
+                        });
+                        // Auto-play first result if coming from settings
+                        if(document.getElementById('settings').style.display === 'flex') {
+                            yt.loadVideoById(d.items[0].url.split('v=')[1]);
+                            closeM();
+                        }
                     }
-                    const g = document.getElementById('grid'); g.innerHTML = '';
-                    d.items.slice(0, 12).forEach(i => {
-                        const div = document.createElement('div');
-                        div.className = 'card';
-                        div.onclick = () => { yt.loadVideoById(i.url.split('v=')[1]); document.getElementById('track-art').src = i.thumbnail; };
-                        div.innerHTML = `<img src="${i.thumbnail}"><div class="card-info">${i.title}</div>`;
-                        g.appendChild(div);
-                    });
                     return;
                 } catch(e) { continue; }
             }
         }
 
-        function updateBG(url) { 
-            const v = document.getElementById('video-bg');
-            v.src = url; v.load(); v.play();
-        }
-
+        function adj(type, v) { if(type==='bright') document.documentElement.style.setProperty('--bg-bright', v/100); }
+        function toggleLoop() { isLooping = !isLooping; document.getElementById('loop-btn').style.color = isLooping ? 'var(--accent)' : '#333'; document.getElementById('loop-stat').innerText = isLooping ? 'LOOP: ACTIVE' : 'LOOP: OFF'; }
         function toggleP() { yt.getPlayerState() === 1 ? yt.pauseVideo() : yt.playVideo(); }
         function setV(v) { yt.setVolume(v); document.getElementById('v-val').innerText = v; }
         function seek(v) { yt.seekTo(v); }
@@ -272,7 +274,6 @@
             }
         }
         function fmt(s) { const m = Math.floor(s/60), sc = Math.floor(s%60); return `${m}:${sc < 10 ? '0' : ''}${sc}`; }
-        function toggleLoop() { isLooping = !isLooping; document.getElementById('loop-btn').style.color = isLooping ? 'var(--accent)' : '#333'; }
     </script>
 </body>
 </html>
