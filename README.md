@@ -28,3 +28,6 @@ Open the webplayer in your browser, paste a valid audio URL into the input field
  More settings,
  Bug and error fixes,
  More later.
+
+
+COPYRIGHT : AetherWave Technologies
