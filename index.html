@@ -9,14 +9,14 @@
     <style>
         :root { 
             --accent: #ff0033; 
-            --ui-bg: rgba(0, 0, 0, 0.6); 
+            --ui-bg: rgba(0, 0, 0, 0.65); 
         }
         
-        /* NO BLACK BACKGROUND - VIDEO ONLY */
+        /* FULL TRANSPARENCY - NO BLACK BLOCKS */
         body, html { 
             margin: 0; padding: 0; height: 100vh; width: 100vw;
             font-family: 'Inter', sans-serif; color: white;
-            overflow: hidden; background: none; 
+            overflow: hidden; background-color: transparent; 
         }
 
         #video-container {
@@ -29,118 +29,123 @@
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             object-fit: cover;
-            filter: brightness(0.6);
+            filter: brightness(0.5);
+            background-color: #000; /* Fallback only if video fails */
         }
 
         header { 
-            height: 80px; display: flex; align-items: center; justify-content: center;
-            padding: 0 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+            height: 90px; display: flex; align-items: center; justify-content: center;
+            padding: 0 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
             z-index: 100; position: relative;
         }
 
         .search-bar {
-            width: 700px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255,255,255,0.2);
-            padding: 14px 20px; color: white; font-size: 16px; border-radius: 8px; outline: none;
-            backdrop-filter: blur(10px); transition: 0.2s;
+            width: 650px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.2);
+            padding: 16px 22px; color: white; font-size: 18px; border-radius: 10px; outline: none;
+            backdrop-filter: blur(15px); transition: 0.3s;
         }
-        .search-bar:focus { border-color: var(--accent); background: rgba(0,0,0,0.8); }
+        .search-bar:focus { border-color: var(--accent); background: rgba(0,0,0,0.9); box-shadow: 0 0 20px rgba(255,0,51,0.2); }
 
         .grid { 
-            position: absolute; top: 100px; bottom: 120px; left: 0; right: 0;
+            position: absolute; top: 110px; bottom: 130px; left: 0; right: 0;
             padding: 0 40px; display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
             gap: 20px; overflow-y: auto; scrollbar-width: none;
         }
-        .card { cursor: pointer; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
-        .card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .card { cursor: pointer; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; backdrop-filter: blur(5px); }
+        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
         .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
-        .card-info { padding: 10px; font-size: 14px; font-weight: 700; }
+        .card-info { padding: 12px; font-size: 15px; font-weight: 700; }
 
         footer {
-            position: fixed; bottom: 0; width: 100%; height: 110px;
-            background: var(--ui-bg); border-top: 1px solid var(--accent);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 40px; box-sizing: border-box; backdrop-filter: blur(20px);
+            position: fixed; bottom: 0; width: 100%; height: 115px;
+            background: var(--ui-bg); border-top: 2px solid var(--accent);
+            display: grid; grid-template-columns: 350px 1fr 350px;
+            align-items: center; padding: 0 40px; box-sizing: border-box; backdrop-filter: blur(30px);
         }
 
-        .t-info { display: flex; align-items: center; gap: 15px; width: 300px; }
-        #track-art { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; }
-        #track-name { font-size: 16px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-cell { display: flex; align-items: center; gap: 15px; }
+        #track-art { width: 70px; height: 70px; border-radius: 6px; border: 1px solid var(--accent); object-fit: cover; }
+        #track-name { font-size: 18px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .controls { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .p-btn { width: 50px; height: 50px; border-radius: 50%; background: #fff; color: #000; border: none; cursor: pointer; font-size: 20px; }
-        .p-btn:hover { background: var(--accent); color: #fff; }
+        .player-cell { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .play-btn { width: 60px; height: 60px; border-radius: 50%; background: #fff; color: #000; border: none; cursor: pointer; font-size: 24px; transition: 0.2s; }
+        .play-btn:hover { background: var(--accent); color: #fff; transform: scale(1.1); }
         
-        #scrub { width: 100%; max-width: 500px; accent-color: var(--accent); cursor: pointer; }
+        .loop-btn { background: none; border: 1px solid #444; color: #888; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-weight: 800; font-size: 11px; transition: 0.2s; }
+        .loop-btn.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px var(--accent); }
 
-        .vol { width: 300px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
-        #v-val { font-weight: 900; color: var(--accent); min-width: 30px; }
+        #scrub { width: 100%; max-width: 550px; accent-color: var(--accent); cursor: pointer; }
+
+        .vol-cell { display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
+        #v-val { font-weight: 900; color: var(--accent); font-size: 22px; width: 35px; text-align: right; }
     </style>
 </head>
-<body onclick="unlock()">
+<body onclick="forceEngagement()">
 
     <div id="video-container">
         <video autoplay muted loop playsinline id="video-bg">
-    <source src="Akatsuki.mp4" type="video/mp4">
-</video>
-        
+            <source src="Akatsuki.mp4" type="video/mp4">
+        </video>
     </div>
 
     <header>
-        <input type="text" class="search-bar" id="mSearch" placeholder="Paste Song URL or Type Name..." onkeydown="if(event.key==='Enter') handle(this.value)">
+        <input type="text" class="search-bar" id="searchInp" placeholder="Enter Song URL or Name..." onkeydown="if(event.key==='Enter') startProcess(this.value)">
     </header>
 
     <div class="grid" id="grid"></div>
 
     <footer>
-        <div class="t-info">
+        <div class="track-cell">
             <img id="track-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-            <div id="track-name">Aether Player</div>
+            <div id="track-name">Aether Stream</div>
         </div>
 
-        <div class="controls">
-            <div style="display:flex; gap:30px; align-items:center;">
-                <button onclick="yt.previousVideo()" style="background:none; border:none; color:#888; cursor:pointer; font-weight:bold;">PREV</button>
-                <button class="p-btn" id="m-play" onclick="toggleP()">▶</button>
-                <button onclick="yt.nextVideo()" style="background:none; border:none; color:#888; cursor:pointer; font-weight:bold;">NEXT</button>
+        <div class="player-cell">
+            <div style="display:flex; gap:40px; align-items:center;">
+                <button onclick="yt.previousVideo()" style="background:none; border:none; color:#666; cursor:pointer; font-weight:900;">PREV</button>
+                <button class="play-btn" id="m-play" onclick="togglePlay()">▶</button>
+                <button class="loop-btn" id="loop-toggle" onclick="toggleLoop()">LOOP: OFF</button>
+                <button onclick="yt.nextVideo()" style="background:none; border:none; color:#666; cursor:pointer; font-weight:900;">NEXT</button>
             </div>
-            <input type="range" id="scrub" value="0" step="1" oninput="seek(this.value)">
+            <input type="range" id="scrub" value="0" step="1" oninput="manualSeek(this.value)">
         </div>
 
-        <div class="vol">
+        <div class="vol-cell">
             <span id="v-val">20</span>
-            <input type="range" oninput="setV(this.value)" value="20" min="0" max="100" style="accent-color:var(--accent);">
+            <input type="range" oninput="changeVol(this.value)" value="20" min="0" max="100" style="accent-color:var(--accent); width: 100px;">
         </div>
     </footer>
 
-    <div id="player" style="position:absolute; top:-999px;"></div>
+    <div id="player" style="position:absolute; top:-1000px;"></div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let yt, unlocked = false;
+        let yt, isLooping = false, hasEngaged = false;
 
-        function unlock() {
-            if(!unlocked) {
-                document.getElementById('video-bg').play();
+        // BROWSER SAFETY UNLOCK
+        function forceEngagement() {
+            if(!hasEngaged) {
+                const vid = document.getElementById('video-bg');
+                vid.play().catch(e => console.log("Video wait..."));
                 if(yt && yt.playVideo) yt.playVideo();
-                unlocked = true;
+                hasEngaged = true;
             }
         }
 
         function onYouTubeIframeAPIReady() {
             yt = new YT.Player('player', {
                 height: '0', width: '0',
-                playerVars: { 'autoplay': 1, 'controls': 0, 'enablejsapi': 1, 'rel': 0 },
+                playerVars: { 'autoplay': 1, 'controls': 0, 'enablejsapi': 1, 'rel': 0, 'origin': window.location.origin },
                 events: { 
                     'onReady': (e) => { e.target.setVolume(20); }, 
                     'onStateChange': (e) => {
-                        if(e.data === 1) {
-                            document.getElementById('track-name').innerText = yt.getVideoData().title;
+                        if(e.data === 1) { // Playing
+                            document.getElementById('track-name').innerText = yt.getVideoData().title.toUpperCase();
                             document.getElementById('m-play').innerText = '⏸';
-                            setInterval(() => {
-                                document.getElementById('scrub').max = yt.getDuration();
-                                document.getElementById('scrub').value = yt.getCurrentTime();
-                            }, 500);
+                            updateProgress();
+                        } else if (e.data === 0) { // Ended
+                            if(isLooping) { yt.playVideo(); } else { yt.nextVideo(); }
                         } else {
                             document.getElementById('m-play').innerText = '▶';
                         }
@@ -149,25 +154,25 @@
             });
         }
 
-        function handle(val) {
+        function startProcess(val) {
             if(!val) return;
-            const id = extract(val);
+            const id = extractId(val);
             if(id) {
                 yt.loadVideoById(id);
                 document.getElementById('track-art').src = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
             } else {
-                search(val);
+                runSearch(val);
             }
-            document.getElementById('mSearch').value = '';
+            document.getElementById('searchInp').value = '';
         }
 
-        function extract(url) {
+        function extractId(url) {
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             const match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        async function search(q) {
+        async function runSearch(q) {
             const r = await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(q)}&filter=music_songs`);
             const d = await r.json();
             if(d.items && d.items.length > 0) {
@@ -184,9 +189,25 @@
             }
         }
 
-        function toggleP() { yt.getPlayerState() === 1 ? yt.pauseVideo() : yt.playVideo(); }
-        function setV(v) { yt.setVolume(v); document.getElementById('v-val').innerText = v; }
-        function seek(v) { yt.seekTo(v); }
+        function toggleLoop() {
+            isLooping = !isLooping;
+            const btn = document.getElementById('loop-toggle');
+            btn.classList.toggle('active', isLooping);
+            btn.innerText = isLooping ? "LOOP: ON" : "LOOP: OFF";
+        }
+
+        function togglePlay() { yt.getPlayerState() === 1 ? yt.pauseVideo() : yt.playVideo(); }
+        function changeVol(v) { yt.setVolume(v); document.getElementById('v-val').innerText = v; }
+        function manualSeek(v) { yt.seekTo(v); }
+        
+        function updateProgress() {
+            setInterval(() => {
+                if(yt && yt.getCurrentTime) {
+                    document.getElementById('scrub').max = yt.getDuration();
+                    document.getElementById('scrub').value = yt.getCurrentTime();
+                }
+            }, 500);
+        }
     </script>
 </body>
 </html>
