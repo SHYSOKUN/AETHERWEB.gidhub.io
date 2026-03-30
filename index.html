@@ -2,94 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Aether | Jujutsu Edition</title>
+    <title>Aether WEBPLAYER</title>
     <style>
         :root { 
             --accent: #9d50bb; 
-            --bg-overlay: rgba(0, 0, 0, 0.8); 
+            --bg-overlay: rgba(0, 0, 0, 0.7); 
             --text-main: #ffffff;
             --text-sub: #aaaaaa;
-            --card-size: 150px;
+            --card-size: 160px;
+            --glass-blur: 10px;
+            --font-weight: 400;
         }
         
         body, html { 
             margin: 0; padding: 0; height: 100vh; width: 100vw;
             font-family: 'Inter', system-ui, sans-serif;
+            font-weight: var(--font-weight);
             color: var(--text-main);
             overflow: hidden; background: #000;
         }
 
-        /* THE BACKGROUND FIX */
         #video-bg {
-            position: fixed; inset: 0;
-            width: 100%; height: 100%;
-            z-index: -1; object-fit: cover;
-            filter: brightness(0.4);
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            z-index: -1; object-fit: cover; filter: brightness(0.4) saturate(1.2);
         }
 
         .app-container {
-            display: grid;
-            grid-template-rows: 1fr 85px;
-            height: 100vh;
-            background: var(--bg-overlay);
+            display: grid; grid-template-rows: 1fr 90px; height: 100vh;
+            background: var(--bg-overlay); backdrop-filter: blur(var(--glass-blur));
         }
 
-        main { padding: 20px 30px; overflow-y: auto; }
-
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .logo { font-size: 28px; font-weight: 900; color: var(--accent); letter-spacing: -1.5px; text-shadow: 0 0 15px var(--accent); }
+        main { padding: 25px; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .logo { font-size: 32px; font-weight: 900; color: var(--accent); text-shadow: 0 0 20px var(--accent); }
         
-        .search-row { display: flex; gap: 8px; margin-bottom: 15px; width: 100%; }
-        
-        input { 
-            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 6px; color: white; padding: 10px 15px; font-size: 14px; 
-            outline: none; flex: 1;
-        }
-        input:focus { border-color: var(--accent); background: rgba(255,255,255,0.15); }
+        .search-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        input, select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; padding: 12px; outline: none; }
 
-        .btn-play { 
-            background: var(--accent); border: none; color: white; padding: 0 15px; 
-            border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;
-        }
+        .btn-play { background: var(--accent); border: none; color: white; padding: 0 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-play:hover { filter: brightness(1.2); transform: scale(1.02); }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-size), 1fr)); gap: 15px; }
-        .card { 
-            background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; 
-            cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05);
-        }
-        .card:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); }
-        .card img { width: 100%; aspect-ratio: 1; border-radius: 6px; margin-bottom: 10px; }
-        .card-title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-artist { font-size: 12px; color: var(--text-sub); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-size), 1fr)); gap: 20px; }
+        .card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; border: 1px solid transparent; }
+        .card:hover { border-color: var(--accent); background: rgba(255,255,255,0.1); transform: translateY(-5px); }
+        .card img { width: 100%; aspect-ratio: 1; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
 
-        footer { 
-            background: rgba(5,5,5,0.98); border-top: 1px solid var(--accent);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
-        }
-        .track-info { display: flex; align-items: center; gap: 12px; width: 250px; }
-        #hud-art { width: 50px; height: 50px; border-radius: 4px; object-fit: cover; border: 1px solid var(--accent); }
-        #hud-title { font-size: 13px; font-weight: 700; }
-        #hud-artist { font-size: 11px; color: var(--text-sub); }
+        footer { background: rgba(0,0,0,0.95); border-top: 1px solid var(--accent); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; z-index: 100; }
+        #hud-art { width: 60px; height: 60px; border-radius: 8px; border: 1px solid var(--accent); transition: 0.5s; }
+        .bloom { box-shadow: 0 0 15px var(--accent); }
 
-        .controls { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; max-width: 450px; }
-        .play-btn { 
-            background: white; border: none; width: 35px; height: 35px; border-radius: 50%; 
-            cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;
-        }
+        .play-btn { background: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
 
-        .progress-container { width: 100%; display: flex; align-items: center; gap: 8px; font-size: 10px; font-family: monospace; }
-        input[type="range"] { flex: 1; accent-color: var(--accent); height: 3px; cursor: pointer; }
-
-        #settings-modal { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); 
-            z-index: 1000; align-items: center; justify-content: center; 
-        }
-        .settings-content { 
-            background: #111; padding: 25px; border-radius: 15px; width: 350px; 
-            border: 1px solid var(--accent);
-        }
-        .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 13px; }
+        /* Settings Modal */
+        #settings-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .settings-content { background: #111; padding: 30px; border-radius: 20px; width: 450px; border: 2px solid var(--accent); max-height: 80vh; overflow-y: auto; }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        label { font-size: 14px; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -102,70 +70,117 @@
         <main>
             <div class="header">
                 <div class="logo">AETHER</div>
-                <div style="cursor:pointer; font-size: 20px;" onclick="toggleSettings()">⚙️</div>
+                <div style="cursor:pointer; font-size: 26px;" onclick="toggleSettings()">⚙️</div>
             </div>
-
             <div class="search-row">
-                <input type="text" id="universal-search" placeholder="Search..." onkeydown="if(event.key==='Enter') search(this.value)">
-                <input type="text" id="url-input" style="flex: 0.4;" placeholder="Paste Link...">
-                <button class="btn-play" onclick="handleLink(document.getElementById('url-input').value)">LOAD</button>
+                <input type="text" id="universal-search" style="flex:2" placeholder="Search song or artist..." onkeydown="if(event.key==='Enter') search(this.value)">
+                <input type="text" id="url-input" style="flex:1" placeholder="Direct Link...">
+                <button class="btn-play" onclick="handleLink(document.getElementById('url-input').value)">PLAY URL</button>
             </div>
-
             <div class="grid" id="main-grid"></div>
         </main>
 
         <footer>
-            <div class="track-info">
-                <img id="hud-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-                <div>
-                    <div id="hud-title">Aether Tuner</div>
-                    <div id="hud-artist">Standing by...</div>
+            <div style="display: flex; align-items: center; gap: 15px; width: 300px;">
+                <img id="hud-art" class="bloom" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+                <div style="overflow: hidden;">
+                    <div id="hud-title" style="font-weight: bold; font-size: 14px; white-space: nowrap; text-overflow: ellipsis;">No Track</div>
+                    <div id="hud-artist" style="font-size: 12px; color: var(--text-sub);">System Ready</div>
                 </div>
             </div>
-
-            <div class="controls">
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; max-width: 600px;">
                 <button class="play-btn" id="play-main" onclick="togglePlay()">▶</button>
-                <div class="progress-container">
+                <div style="width: 100%; display: flex; align-items: center; gap: 10px; font-size: 12px;">
                     <span id="time-curr">0:00</span>
-                    <input type="range" id="seek" value="0" step="1" oninput="seek(this.value)">
+                    <input type="range" id="seek" style="width: 100%; accent-color: var(--accent);" value="0" oninput="seek(this.value)">
                     <span id="time-total">0:00</span>
                 </div>
             </div>
-
-            <div style="width: 250px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-                <span style="font-size: 14px;">🔊</span>
-                <input type="range" style="width: 80px;" oninput="setVol(this.value)" value="80">
+            <div style="width: 300px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                <span>🔊</span>
+                <input type="range" oninput="setVol(this.value)" value="80" style="accent-color: var(--accent); width: 100px;">
             </div>
         </footer>
     </div>
 
     <div id="settings-modal">
         <div class="settings-content">
-            <h3 style="color:var(--accent); margin-top:0;">Domain Control</h3>
+            <h2 style="color:var(--accent); margin-top:0;">Control Domain</h2>
+            
             <div class="setting-row">
-                <label>Theme Color</label>
-                <input type="color" id="color-picker" value="#9d50bb" oninput="updateTheme(this.value)">
+                <label>Accent Color</label>
+                <input type="color" id="accent-pick" value="#9d50bb" oninput="updateSetting('accent', this.value)">
             </div>
+
+            <div class="setting-row">
+                <label>UI Transparency</label>
+                <input type="range" min="10" max="100" value="70" oninput="updateSetting('opacity', this.value)">
+            </div>
+
+            <div class="setting-row">
+                <label>Visualizer Bloom</label>
+                <input type="checkbox" checked onchange="document.getElementById('hud-art').classList.toggle('bloom')">
+            </div>
+
+            <div class="setting-row">
+                <label>Font Weight (Boldness)</label>
+                <select onchange="updateSetting('weight', this.value)">
+                    <option value="300">Light</option>
+                    <option value="400" selected>Normal</option>
+                    <option value="700">Bold</option>
+                    <option value="900">Black</option>
+                </select>
+            </div>
+
             <div class="setting-row">
                 <label>Background Dim</label>
-                <input type="range" min="0" max="100" value="40" oninput="document.getElementById('video-bg').style.filter = `brightness(${this.value/100})` ">
+                <input type="range" min="0" max="100" value="40" oninput="updateSetting('dim', this.value)">
             </div>
-            <button class="btn-play" style="width:100%; padding:10px; margin-top:5px;" onclick="toggleSettings()">CLOSE</button>
+
+            <div class="setting-row">
+                <label>Playback Engine</label>
+                <select id="engine-select">
+                    <option>YouTube API (Stable)</option>
+                    <option>Piped Proxy (External)</option>
+                </select>
+            </div>
+
+            <button class="btn-play" style="width:100%; padding:12px;" onclick="toggleSettings()">SAVE & CLOSE</button>
         </div>
     </div>
 
-    <div id="yt-engine" style="display:none;"><div id="player"></div></div>
+    <div id="player-container" style="position: absolute; top: -9999px;"><div id="player"></div></div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let yt;
+        const instances = ["https://pipedapi.kavin.rocks", "https://api.piped.video", "https://pipedapi.reble.xyz"];
+
         function onYouTubeIframeAPIReady() {
-            yt = new YT.Player('player', { events: { 'onStateChange': onStateChange } });
+            yt = new YT.Player('player', {
+                height: '0', width: '0',
+                playerVars: { 'autoplay': 1, 'controls': 0, 'origin': window.location.origin, 'enablejsapi': 1 },
+                events: { 
+                    'onReady': () => console.log("Aether Engine Online"),
+                    'onStateChange': (e) => { if(e.data === 1) startTimer(); }
+                }
+            });
         }
 
-        function updateTheme(color) {
-            document.documentElement.style.setProperty('--accent', color);
-            localStorage.setItem('aether-color', color);
+        function updateSetting(type, val) {
+            if(type === 'accent') document.documentElement.style.setProperty('--accent', val);
+            if(type === 'opacity') document.documentElement.style.setProperty('--bg-overlay', `rgba(0,0,0,${val/100})`);
+            if(type === 'dim') document.getElementById('video-bg').style.filter = `brightness(${val/100}) saturate(1.2)`;
+            if(type === 'weight') document.documentElement.style.setProperty('--font-weight', val);
+        }
+
+        async function fetchWithFallback(endpoint) {
+            for (let base of instances) {
+                try {
+                    const res = await fetch(`${base}${endpoint}`);
+                    if (res.ok) return await res.json();
+                } catch (e) { continue; }
+            }
         }
 
         async function handleLink(url) {
@@ -173,27 +188,28 @@
             const res = await fetch(`https://api.song.link/v1-alpha.1/links?url=${encodeURIComponent(url)}`);
             const data = await res.json();
             const track = data.entitiesByUniqueId[Object.keys(data.entitiesByUniqueId)[0]];
-            playTrack(track.title + " " + track.artistName, track.title, track.artistName, track.thumbnailUrl);
+            search(track.title + " " + track.artistName, true);
         }
 
-        async function search(q) {
-            const res = await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(q)}&filter=music_songs`);
-            const data = await res.json();
+        async function search(q, autoPlayFirst = false) {
+            const data = await fetchWithFallback(`/search?q=${encodeURIComponent(q)}&filter=music_songs`);
+            if(!data) return;
+            if(autoPlayFirst) {
+                playTrack(data.items[0].url.split('v=')[1], data.items[0].title, data.items[0].uploaderName, data.items[0].thumbnail);
+                return;
+            }
             const grid = document.getElementById('main-grid');
             grid.innerHTML = '';
             data.items.slice(0, 15).forEach(s => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.onclick = () => playTrack(s.title + " " + s.uploaderName, s.title, s.uploaderName, s.thumbnail);
-                card.innerHTML = `<img src="${s.thumbnail}"><div class="card-title">${s.title}</div><div class="card-artist">${s.uploaderName}</div>`;
+                card.onclick = () => playTrack(s.url.split('v=')[1], s.title, s.uploaderName, s.thumbnail);
+                card.innerHTML = `<img src="${s.thumbnail}"><div style="font-weight:bold; font-size:14px; overflow:hidden;">${s.title}</div>`;
                 grid.appendChild(card);
             });
         }
 
-        async function playTrack(query, title, artist, art) {
-            const res = await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(query)}&filter=music_songs`);
-            const data = await res.json();
-            const id = data.items[0].url.split('v=')[1];
+        function playTrack(id, title, artist, art) {
             yt.loadVideoById(id);
             document.getElementById('hud-title').innerText = title;
             document.getElementById('hud-artist').innerText = artist;
@@ -202,21 +218,19 @@
         }
 
         function togglePlay() {
-            const s = yt.getPlayerState();
-            if(s === 1) { yt.pauseVideo(); document.getElementById('play-main').innerText = '▶'; }
+            const state = yt.getPlayerState();
+            if(state === 1) { yt.pauseVideo(); document.getElementById('play-main').innerText = '▶'; }
             else { yt.playVideo(); document.getElementById('play-main').innerText = '⏸'; }
         }
 
-        function onStateChange(e) {
-            if(e.data === 1) {
-                setInterval(() => {
-                    const d = yt.getDuration(), c = yt.getCurrentTime();
-                    document.getElementById('seek').max = d;
-                    document.getElementById('seek').value = c;
-                    document.getElementById('time-curr').innerText = fmt(c);
-                    document.getElementById('time-total').innerText = fmt(d);
-                }, 1000);
-            }
+        function startTimer() {
+            setInterval(() => {
+                const d = yt.getDuration(), c = yt.getCurrentTime();
+                document.getElementById('seek').max = d;
+                document.getElementById('seek').value = c;
+                document.getElementById('time-curr').innerText = fmt(c);
+                document.getElementById('time-total').innerText = fmt(d);
+            }, 1000);
         }
 
         function toggleSettings() {
@@ -224,21 +238,9 @@
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        function fmt(s) { 
-            const m = Math.floor(s/60);
-            const sec = Math.floor(s%60);
-            return m + ":" + String(sec).padStart(2,'0'); 
-        }
+        function fmt(s) { return Math.floor(s/60) + ":" + String(Math.floor(s%60)).padStart(2,'0'); }
         function setVol(v) { yt.setVolume(v); }
         function seek(v) { yt.seekTo(v); }
-
-        window.onload = () => {
-            const saved = localStorage.getItem('aether-color');
-            if(saved) {
-                updateTheme(saved);
-                document.getElementById('color-picker').value = saved;
-            }
-        };
     </script>
 </body>
 </html>
