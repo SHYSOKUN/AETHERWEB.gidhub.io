@@ -17,9 +17,9 @@ AETHER lets users input a direct audio file link. Once the link is provided, the
 Open the webplayer in your browser, paste a valid audio URL into the input field, and press play. The audio will begin streaming immediately.
 
 ⚠️ Important Notes
-Only direct audio file links are supported (such as MP3 or WAV files)
-Streaming services like YouTube or Spotify will not work
-The audio source must allow public access
+  just past the url in the top bar hit enter and enjoy you music 
+  !Warning we made the player Show Youtube and spotify Ur hate We hate oyu for forcing ads 
+  No good Platfrom force the user to see ads!
 💡 Future Improvements
 Playlist functionality
 Drag and drop support
