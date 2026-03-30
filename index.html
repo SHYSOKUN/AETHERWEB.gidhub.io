@@ -20,12 +20,12 @@
             background: #000; overflow: hidden; touch-action: manipulation;
         }
 
-        /* LIVE URL BACKGROUND ENGINE */
         #video-bg {
             position: fixed; right: 0; bottom: 0;
             min-width: 100%; min-height: 100%;
             z-index: -2; object-fit: cover;
-            filter: brightness(0.4) contrast(1.1) saturate(1.2);
+            filter: brightness(0.4) contrast(1.1);
+            transition: 0.5s filter;
         }
 
         .vignette {
@@ -39,21 +39,16 @@
             height: 100vh; width: 100%; position: relative; z-index: 10;
         }
 
-        /* HEADER */
         header { padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; }
-        .branding h1 { 
-            font-family: var(--font-logo); font-size: clamp(28px, 6vw, 48px); 
-            margin: 0; letter-spacing: 8px; color: white; text-shadow: 0 0 25px var(--accent);
-        }
+        .branding h1 { font-family: var(--font-logo); font-size: clamp(28px, 6vw, 48px); margin: 0; letter-spacing: 8px; text-shadow: 0 0 25px var(--accent); }
 
         .sys-btn { 
             background: transparent; border: 1px solid var(--accent);
             color: var(--accent); padding: 10px 25px; font-size: 11px; cursor: pointer;
             letter-spacing: 3px; font-weight: 900; transition: 0.3s;
         }
-        .sys-btn:hover { background: var(--accent); color: white; box-shadow: 0 0 15px var(--accent); }
+        .sys-btn:hover { background: var(--accent); color: white; }
 
-        /* SEARCH BAR - MASSIVE */
         .search-wrap { padding: 15px 40px; display: flex; justify-content: center; }
         .search-bar {
             background: rgba(255, 255, 255, 0.04); border: 1px solid #1a1a1a;
@@ -62,21 +57,17 @@
             border-left: 6px solid var(--accent); transition: 0.4s;
             backdrop-filter: blur(10px);
         }
-        .search-bar:focus { border-color: var(--accent); width: 100%; max-width: 900px; background: #000; }
 
-        /* CONTENT GRID */
         .scroll-area { 
             padding: 20px 40px; display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
             gap: 25px; overflow-y: auto; scrollbar-width: none;
         }
-        .card { cursor: pointer; background: #050505; border: 1px solid #111; transition: 0.3s ease; }
+        .card { cursor: pointer; background: #050505; border: 1px solid #111; transition: 0.3s; }
         .card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.55; transition: 0.3s; }
-        .card:hover img { opacity: 0.9; }
-        .card-info { padding: 18px; font-size: 12px; font-weight: 900; color: #fff; letter-spacing: 1px; }
+        .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.5; }
+        .card-info { padding: 18px; font-size: 12px; font-weight: 900; }
 
-        /* HUD FOOTER */
         footer {
             background: var(--glass); border-top: 3px solid var(--accent);
             display: grid; grid-template-columns: 1fr; padding: 25px;
@@ -85,41 +76,45 @@
         @media (min-width: 900px) { footer { grid-template-columns: 1.3fr 2fr 1.3fr; padding: 25px 60px; } }
 
         .track-box { display: flex; align-items: center; gap: 20px; }
-        #track-art { width: 65px; height: 65px; border: 1px solid var(--accent); object-fit: cover; }
-        #track-name { font-weight: 900; font-size: 18px; color: white; text-transform: uppercase; }
+        #track-art { width: 65px; height: 65px; border: 1px solid var(--accent); }
 
         .controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
         .main-btns { display: flex; gap: 40px; align-items: center; }
-        .play-btn { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; color: white; cursor: pointer; font-size: 24px; transition: 0.3s; }
-        .play-btn:hover { background: var(--accent); box-shadow: 0 0 20px var(--accent); }
+        .play-btn { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; color: white; cursor: pointer; font-size: 24px; }
 
         .scrub-box { width: 100%; max-width: 600px; display: flex; align-items: center; gap: 12px; font-family: monospace; font-size: 12px; color: #444; }
-        #scrub { flex: 1; accent-color: var(--accent); cursor: pointer; height: 4px; }
+        #scrub { flex: 1; accent-color: var(--accent); cursor: pointer; }
 
-        /* MODALS */
-        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.98); align-items: center; justify-content: center; padding: 20px; }
-        .modal-box { width: 100%; max-width: 500px; border: 1px solid var(--accent); padding: 45px; background: #000; box-shadow: 0 0 50px rgba(255,0,51,0.2); }
+        /* USEFUL SETTINGS MODAL */
+        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; }
+        .modal-box { width: 100%; max-width: 500px; border: 1px solid var(--accent); padding: 40px; background: #000; max-height: 90vh; overflow-y: auto; }
         
-        .credits-box { background: #080808; border-left: 3px solid var(--accent); padding: 20px; font-family: monospace; font-size: 11px; color: #555; line-height: 2; }
-        .credits-box b { color: var(--accent); letter-spacing: 2px; }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #111; }
+        .setting-row label { font-size: 12px; letter-spacing: 2px; color: #888; font-weight: 900; }
+        
+        .input-mini { background: #111; border: 1px solid #333; color: white; padding: 8px; font-size: 11px; width: 180px; outline: none; }
+        .input-mini:focus { border-color: var(--accent); }
+
+        .toggle-btn { background: #111; border: 1px solid #333; color: #444; padding: 8px 15px; cursor: pointer; font-size: 10px; font-weight: 900; }
+        .toggle-btn.on { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(255,0,51,0.2); }
     </style>
 </head>
 <body onclick="forceStart()">
 
     <video autoplay muted loop playsinline id="video-bg">
-        <source src="https://motionbgs.com/media/893/akatsuki-naruto.960x540.mp4" type="video/mp4">
+        <source src="Akatsuki.mp4" type="video/mp4">
     </video>
     <div class="vignette"></div>
 
     <div class="main-ui">
         <header>
             <div class="branding"><h1>AETHER</h1></div>
-            <button class="sys-btn" onclick="openM()">SYSTEM CREDITS</button>
+            <button class="sys-btn" onclick="openM()">SETTINGS</button>
         </header>
 
         <main>
             <div class="search-wrap">
-                <input type="text" class="search-bar" id="si" placeholder="YOU SONG OR URL LINK HERE (HIT ENTER!)" onkeydown="if(event.key==='Enter') startSearch(this.value)">
+                <input type="text" class="search-bar" id="si" placeholder="URL OR SONG NAME (ENTER)" onkeydown="if(event.key==='Enter') startSearch(this.value)">
             </div>
             <div class="scroll-area" id="grid"></div>
         </main>
@@ -128,17 +123,17 @@
             <div class="track-box">
                 <img id="track-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
                 <div>
-                    <div id="track-name">READY FOR INPUT</div>
-                    <div id="loop-stat" style="font-size:10px; color:var(--accent); letter-spacing:2px; font-weight:900;">LOOP ENGINE: IDLE</div>
+                    <div id="track-name" style="font-weight:900;">READY</div>
+                    <div id="status-tag" style="font-size:10px; color:var(--accent); letter-spacing:2px;">AKATSUKI_ONLINE</div>
                 </div>
             </div>
 
             <div class="controls">
                 <div class="main-btns">
-                    <button onclick="yt.previousVideo()" style="background:none; border:none; color:#333; cursor:pointer; font-weight:900;">PREV</button>
+                    <button onclick="yt.previousVideo()" style="background:none; border:none; color:#333; cursor:pointer;">PREV</button>
                     <button class="play-btn" id="m-play" onclick="toggleP()">▶</button>
-                    <button id="loop-btn" onclick="toggleLoop()" style="background:none; border:none; color:#333; cursor:pointer; font-weight:900; letter-spacing:2px;">LOOP</button>
-                    <button onclick="yt.nextVideo()" style="background:none; border:none; color:#333; cursor:pointer; font-weight:900;">NEXT</button>
+                    <button id="loop-btn" onclick="toggleLoop()" style="background:none; border:none; color:#333; cursor:pointer; font-weight:900;">LOOP</button>
+                    <button onclick="yt.nextVideo()" style="background:none; border:none; color:#333; cursor:pointer;">NEXT</button>
                 </div>
                 <div class="scrub-box">
                     <span id="c-time">0:00</span>
@@ -154,15 +149,37 @@
         </footer>
     </div>
 
-    <div id="credits" class="modal">
+    <div id="settings" class="modal">
         <div class="modal-box">
-            <h2 style="font-family:var(--font-logo); color:var(--accent); margin:0 0 30px 0; letter-spacing:5px;">STATION LOG</h2>
-            <div class="credits-box">
-                CORE DEVELOPER:SHYSOKUN <b></b><br>
-                HUD: <b>VIPBUSTED</b><br>
-                SUB: <b>COMMING SOON</b>
+            <h2 style="font-family:var(--font-logo); color:var(--accent); margin:0 0 25px 0;">SYSTEM CONFIG</h2>
+            
+            <div class="setting-row">
+                <label>BG VIDEO URL</label>
+                <input type="text" class="input-mini" id="bg-url" placeholder="Paste .mp4 link..." onchange="updateBG(this.value)">
             </div>
-            <button class="sys-btn" style="width:100%; margin-top:30px;" onclick="closeM()">DISMISS</button>
+
+            <div class="setting-row">
+                <label>CINEMATIC BRIGHTNESS</label>
+                <input type="range" min="10" max="100" value="40" oninput="adjBright(this.value)">
+            </div>
+
+            <div class="setting-row">
+                <label>AUTO-LOOP SONG</label>
+                <button class="toggle-btn" id="loop-tog" onclick="toggleLoop()">OFF</button>
+            </div>
+
+            <div class="setting-row">
+                <label>UI VIGNETTE</label>
+                <button class="toggle-btn on" id="vig-tog" onclick="toggleVig()">ON</button>
+            </div>
+
+            <div class="setting-row">
+                <label>AUDIO NORMALIZER</label>
+                <button class="toggle-btn" onclick="this.classList.toggle('on')">ON</button>
+            </div>
+
+            <button class="sys-btn" style="width:100%; margin-top:30px;" onclick="closeM()">SAVE CHANGES</button>
+            <p style="font-size:9px; color:#444; margin-top:15px; text-align:center;">AETHER OMEGA v21 // STABLE BUILD</p>
         </div>
     </div>
 
@@ -193,10 +210,21 @@
             });
         }
 
+        // USEFUL SETTING FUNCTIONS
+        function updateBG(url) { if(url) document.getElementById('video-bg').src = url; }
+        function adjBright(v) { document.getElementById('video-bg').style.filter = `brightness(${v/100}) contrast(1.1)`; }
+        function toggleVig() { 
+            const v = document.querySelector('.vignette');
+            const b = document.getElementById('vig-tog');
+            v.style.display = v.style.display === 'none' ? 'block' : 'none';
+            b.classList.toggle('on');
+        }
+
         function toggleLoop() {
             isLooping = !isLooping;
             document.getElementById('loop-btn').style.color = isLooping ? 'var(--accent)' : '#333';
-            document.getElementById('loop-stat').innerText = isLooping ? 'LOOP ENGINE: ACTIVE' : 'LOOP ENGINE: IDLE';
+            document.getElementById('loop-tog').classList.toggle('on');
+            document.getElementById('loop-tog').innerText = isLooping ? 'ON' : 'OFF';
         }
 
         function update() {
@@ -239,8 +267,8 @@
         function toggleP() { yt.getPlayerState() === 1 ? yt.pauseVideo() : yt.playVideo(); }
         function setV(v) { yt.setVolume(v); document.getElementById('v-val').innerText = v; }
         function seek(v) { yt.seekTo(v); }
-        function openM() { document.getElementById('credits').style.display = 'flex'; }
-        function closeM() { document.getElementById('credits').style.display = 'none'; }
+        function openM() { document.getElementById('settings').style.display = 'flex'; }
+        function closeM() { document.getElementById('settings').style.display = 'none'; }
     </script>
 </body>
 </html>
