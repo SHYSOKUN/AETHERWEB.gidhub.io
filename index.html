@@ -9,7 +9,7 @@
     <style>
         :root { 
             --accent: #ff0033; 
-            --glass: rgba(0, 0, 0, 0.85);
+            --glass: rgba(0, 0, 0, 0.96);
             --font-logo: 'Cinzel Decorative', serif;
             --font-jp: 'Noto Sans JP', sans-serif;
         }
@@ -17,190 +17,163 @@
         body, html { 
             margin: 0; padding: 0; height: 100vh; width: 100vw;
             font-family: var(--font-jp); color: white;
-            overflow: hidden; background: #000;
+            background: #000; overflow: hidden; touch-action: manipulation;
         }
 
-        /* FULLSCREEN VIDEO BOX */
+        /* LIVE URL BACKGROUND ENGINE */
         #video-bg {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            min-width: 100%; 
-            min-height: 100%;
-            z-index: -1;
-            object-fit: cover;
-            filter: brightness(0.4) saturate(1.2);
-            background: #000;
+            position: fixed; right: 0; bottom: 0;
+            min-width: 100%; min-height: 100%;
+            z-index: -2; object-fit: cover;
+            filter: brightness(0.4) contrast(1.1) saturate(1.2);
         }
 
         .vignette {
-            position: fixed; inset: 0; z-index: 0;
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 100%);
+            position: fixed; inset: 0; z-index: -1;
+            background: radial-gradient(circle, transparent 10%, #000 100%);
             pointer-events: none;
         }
 
-        .app-shell {
+        .main-ui {
             display: grid; grid-template-rows: auto 1fr auto;
-            height: 100vh; position: relative; z-index: 10;
+            height: 100vh; width: 100%; position: relative; z-index: 10;
         }
 
-        header { padding: 30px 60px; display: flex; justify-content: space-between; align-items: center; }
-        .logo-group { border-left: 3px solid var(--accent); padding-left: 20px; }
-        .logo { font-family: var(--font-logo); font-size: 28px; letter-spacing: 2px; }
-        
-        .btn-sys { 
-            background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white;
-            padding: 8px 20px; font-size: 10px; cursor: pointer; letter-spacing: 2px;
-            text-transform: uppercase; transition: 0.3s;
-        }
-        .btn-sys:hover { border-color: var(--accent); color: var(--accent); background: rgba(255,0,51,0.1); }
-
-        .search-container { padding: 0 60px; margin-bottom: 10px; }
-        .search-box { 
-            width: 350px; border-bottom: 1px solid rgba(255,255,255,0.3); 
-            display: flex; align-items: center; 
-        }
-        .search-box input {
-            background: transparent; border: none; color: white; padding: 10px 0;
-            font-size: 16px; outline: none; flex: 1; font-weight: 100;
+        /* HEADER */
+        header { padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .branding h1 { 
+            font-family: var(--font-logo); font-size: clamp(28px, 6vw, 48px); 
+            margin: 0; letter-spacing: 8px; color: white; text-shadow: 0 0 25px var(--accent);
         }
 
-        .results { 
-            padding: 20px 60px; display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
-            gap: 20px; overflow-y: auto; scrollbar-width: none;
+        .sys-btn { 
+            background: transparent; border: 1px solid var(--accent);
+            color: var(--accent); padding: 10px 25px; font-size: 11px; cursor: pointer;
+            letter-spacing: 3px; font-weight: 900; transition: 0.3s;
         }
-        .song-card { cursor: pointer; background: rgba(255,255,255,0.03); transition: 0.2s; border: 1px solid transparent; }
-        .song-card:hover { border-color: var(--accent); transform: scale(1.02); background: rgba(255,255,255,0.08); }
-        .song-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
-        .song-card div { padding: 10px; font-size: 10px; font-weight: 900; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .sys-btn:hover { background: var(--accent); color: white; box-shadow: 0 0 15px var(--accent); }
 
+        /* SEARCH BAR - MASSIVE */
+        .search-wrap { padding: 15px 40px; display: flex; justify-content: center; }
+        .search-bar {
+            background: rgba(255, 255, 255, 0.04); border: 1px solid #1a1a1a;
+            padding: 22px 30px; width: 100%; max-width: 850px; 
+            color: white; font-size: 18px; outline: none;
+            border-left: 6px solid var(--accent); transition: 0.4s;
+            backdrop-filter: blur(10px);
+        }
+        .search-bar:focus { border-color: var(--accent); width: 100%; max-width: 900px; background: #000; }
+
+        /* CONTENT GRID */
+        .scroll-area { 
+            padding: 20px 40px; display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; overflow-y: auto; scrollbar-width: none;
+        }
+        .card { cursor: pointer; background: #050505; border: 1px solid #111; transition: 0.3s ease; }
+        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.55; transition: 0.3s; }
+        .card:hover img { opacity: 0.9; }
+        .card-info { padding: 18px; font-size: 12px; font-weight: 900; color: #fff; letter-spacing: 1px; }
+
+        /* HUD FOOTER */
         footer {
-            background: var(--glass); border-top: 1px solid rgba(255,255,255,0.1);
-            display: grid; grid-template-columns: 1.2fr 2fr 1.2fr; 
-            padding: 20px 60px; align-items: center; backdrop-filter: blur(10px);
+            background: var(--glass); border-top: 3px solid var(--accent);
+            display: grid; grid-template-columns: 1fr; padding: 25px;
+            align-items: center; backdrop-filter: blur(30px); gap: 20px;
         }
+        @media (min-width: 900px) { footer { grid-template-columns: 1.3fr 2fr 1.3fr; padding: 25px 60px; } }
 
-        .track-meta { display: flex; align-items: center; gap: 15px; }
-        #hud-art { width: 50px; height: 50px; border: 1px solid var(--accent); padding: 2px; }
-        #hud-title { font-weight: 900; font-size: 16px; color: var(--accent); white-space: nowrap; }
+        .track-box { display: flex; align-items: center; gap: 20px; }
+        #track-art { width: 65px; height: 65px; border: 1px solid var(--accent); object-fit: cover; }
+        #track-name { font-weight: 900; font-size: 18px; color: white; text-transform: uppercase; }
 
-        .playback-ctrl { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .btn-circle { width: 45px; height: 45px; border-radius: 50%; border: 1px solid white; background: transparent; color: white; cursor: pointer; transition: 0.3s; }
-        .btn-circle:hover { background: var(--accent); border-color: var(--accent); }
+        .controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .main-btns { display: flex; gap: 40px; align-items: center; }
+        .play-btn { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; color: white; cursor: pointer; font-size: 24px; transition: 0.3s; }
+        .play-btn:hover { background: var(--accent); box-shadow: 0 0 20px var(--accent); }
 
-        .progress-wrap { width: 100%; display: flex; align-items: center; gap: 12px; font-family: monospace; font-size: 10px; color: #555; }
-        #seek { flex: 1; accent-color: var(--accent); height: 2px; cursor: pointer; }
-
-        .vol-wrap { display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
-        .vol-num { font-family: var(--font-logo); color: var(--accent); font-size: 24px; min-width: 40px; }
+        .scrub-box { width: 100%; max-width: 600px; display: flex; align-items: center; gap: 12px; font-family: monospace; font-size: 12px; color: #444; }
+        #scrub { flex: 1; accent-color: var(--accent); cursor: pointer; height: 4px; }
 
         /* MODALS */
-        .modal { 
-            display: none; position: fixed; inset: 0; z-index: 2000;
-            background: rgba(0,0,0,0.95); align-items: center; justify-content: center;
-        }
-        .modal-box { width: 400px; border: 1px solid var(--accent); padding: 30px; background: #000; }
-        .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 15px 0; }
-        .v-opt { padding: 10px; border: 1px solid #222; text-align: center; cursor: pointer; font-size: 10px; letter-spacing: 1px; }
-        .v-opt.active { border-color: var(--accent); color: var(--accent); background: rgba(255,0,51,0.1); }
+        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.98); align-items: center; justify-content: center; padding: 20px; }
+        .modal-box { width: 100%; max-width: 500px; border: 1px solid var(--accent); padding: 45px; background: #000; box-shadow: 0 0 50px rgba(255,0,51,0.2); }
+        
+        .credits-box { background: #080808; border-left: 3px solid var(--accent); padding: 20px; font-family: monospace; font-size: 11px; color: #555; line-height: 2; }
+        .credits-box b { color: var(--accent); letter-spacing: 2px; }
     </style>
 </head>
-<body>
+<body onclick="forceStart()">
 
-    <video id="video-bg" loop muted playsinline autoplay poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-        <source id="bg-source" src="akatsuki.mp4" type="video/mp4">
+    <video autoplay muted loop playsinline id="video-bg">
+        <source src="https://motionbgs.com/media/893/akatsuki-naruto.960x540.mp4" type="video/mp4">
     </video>
     <div class="vignette"></div>
 
-    <div class="app-shell">
+    <div class="main-ui">
         <header>
-            <div class="logo-group">
-                <div class="logo">Aether WEBPLAYER</div>
-            </div>
-            <div class="nav-tools">
-                <button class="btn-sys" onclick="openM('settings')">SYSTEM CONFIG</button>
-            </div>
+            <div class="branding"><h1>AETHER</h1></div>
+            <button class="sys-btn" onclick="openM()">SYSTEM CREDITS</button>
         </header>
 
-        <section>
-            <div class="search-container">
-                <div class="search-box">
-                    <input type="text" id="si" placeholder="INPUT COMMAND..." onkeydown="if(event.key==='Enter') smartLoad(this.value)">
-                </div>
+        <main>
+            <div class="search-wrap">
+                <input type="text" class="search-bar" id="si" placeholder="YOU SONG OR URL LINK HERE (HIT ENTER!)" onkeydown="if(event.key==='Enter') startSearch(this.value)">
             </div>
-            <div class="results" id="main-grid"></div>
-        </section>
+            <div class="scroll-area" id="grid"></div>
+        </main>
 
         <footer>
-            <div class="track-meta">
-                <img id="hud-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-                <div style="overflow: hidden;">
-                    <div id="hud-title">---</div>
-                    <div id="hud-artist" style="font-size: 9px; opacity: 0.4; margin-top: 2px;">STANDBY</div>
+            <div class="track-box">
+                <img id="track-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+                <div>
+                    <div id="track-name">READY FOR INPUT</div>
+                    <div id="loop-stat" style="font-size:10px; color:var(--accent); letter-spacing:2px; font-weight:900;">LOOP ENGINE: IDLE</div>
                 </div>
             </div>
 
-            <div class="playback-ctrl">
-                <div style="display: flex; gap: 30px; align-items: center;">
-                    <button onclick="yt.previousVideo()" style="background:none; border:none; color:white; cursor:pointer;">PREV</button>
-                    <button class="btn-circle" id="play-main" onclick="togglePlay()">▶</button>
-                    <button onclick="yt.nextVideo()" style="background:none; border:none; color:white; cursor:pointer;">NEXT</button>
+            <div class="controls">
+                <div class="main-btns">
+                    <button onclick="yt.previousVideo()" style="background:none; border:none; color:#333; cursor:pointer; font-weight:900;">PREV</button>
+                    <button class="play-btn" id="m-play" onclick="toggleP()">▶</button>
+                    <button id="loop-btn" onclick="toggleLoop()" style="background:none; border:none; color:#333; cursor:pointer; font-weight:900; letter-spacing:2px;">LOOP</button>
+                    <button onclick="yt.nextVideo()" style="background:none; border:none; color:#333; cursor:pointer; font-weight:900;">NEXT</button>
                 </div>
-                <div class="progress-wrap">
-                    <span id="time-curr">0:00</span>
-                    <input type="range" id="seek" value="0" step="1" oninput="seek(this.value)">
-                    <span id="time-total">0:00</span>
+                <div class="scrub-box">
+                    <span id="c-time">0:00</span>
+                    <input type="range" id="scrub" value="0" step="1" oninput="seek(this.value)">
+                    <span id="t-time">0:00</span>
                 </div>
             </div>
 
-            <div class="vol-wrap">
-                <div class="vol-num" id="v-num">15</div>
-                <input type="range" oninput="setVol(this.value)" value="15" min="0" max="100" style="width:70px; accent-color:var(--accent);">
+            <div style="display:flex; justify-content:flex-end; align-items:center; gap:20px;">
+                <div id="v-val" style="font-family:var(--font-logo); color:var(--accent); font-size:32px;">15</div>
+                <input type="range" oninput="setV(this.value)" value="15" min="0" max="100" style="width:100px; accent-color:var(--accent);">
             </div>
         </footer>
     </div>
 
-    <div id="settings-modal" class="modal">
+    <div id="credits" class="modal">
         <div class="modal-box">
-            <h2 style="font-family:var(--font-logo); color:var(--accent); margin:0 0 15px 0; font-size: 20px;">SETTINGS</h2>
-            
-            <div style="font-size: 9px; color: #444; letter-spacing: 2px;">VIDEO ENGINE</div>
-            <div class="video-grid">
-                <div class="v-opt" onclick="changeBG('jujutsu.mp4', this)">JUJUTSU</div>
-                <div class="v-opt" onclick="changeBG('zenitsu.mp4', this)">ZENITSU</div>
-                <div class="v-opt" onclick="changeBG('cyberpunk.mp4', this)">CYBERPUNK</div>
-                <div class="v-opt active" onclick="changeBG('akatsuki.mp4', this)">AKATSUKI</div>
+            <h2 style="font-family:var(--font-logo); color:var(--accent); margin:0 0 30px 0; letter-spacing:5px;">STATION LOG</h2>
+            <div class="credits-box">
+                CORE DEVELOPER:SHYSOKUN <b></b><br>
+                HUD: <b>VIPBUSTED</b><br>
+                SUB: <b>COMMING SOON</b>
             </div>
-
-            <div style="font-size: 9px; color: #444; letter-spacing: 2px; margin-top: 15px;">UI ACCENT</div>
-            <input type="color" value="#ff0033" oninput="updateUI('accent', this.value)" style="width:100%; height:30px; border:none; background:none; cursor:pointer;">
-
-            <div style="border-top: 1px solid #111; margin-top: 20px; padding-top: 15px;">
-                <div style="font-size: 9px; color: #444; letter-spacing: 2px;">CREDITS</div>
-                <p style="font-size: 10px; color: #666; line-height: 1.6;">
-                    BUILD: Aether UI 2.0<br>
-                    SOURCE: GitHub Pages Deploy<br>
-                    ENGINE: YouTube iFrame API
-                </p>
-            </div>
-
-            <button class="btn-sys" style="width:100%; margin-top:20px; border-color:var(--accent); color:var(--accent);" onclick="closeM()">SYNC CHANGES</button>
+            <button class="sys-btn" style="width:100%; margin-top:30px;" onclick="closeM()">DISMISS</button>
         </div>
     </div>
 
-    <div id="yt-engine" style="position: absolute; top: -9999px;"><div id="player"></div></div>
+    <div id="yt-api" style="position: absolute; top: -9999px;"><div id="player"></div></div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let yt;
-        const instances = ["https://pipedapi.kavin.rocks", "https://api.piped.video"];
+        let yt, isLooping = false;
+        const bases = ["https://pipedapi.kavin.rocks", "https://api.piped.video"];
 
-        // Fix for GitHub: Force play on first interaction
-        document.body.addEventListener('click', function() {
-            const v = document.getElementById('video-bg');
-            if (v.paused) v.play();
-        }, { once: true });
+        function forceStart() { document.getElementById('video-bg').play().catch(e=>{}); }
 
         function onYouTubeIframeAPIReady() {
             yt = new YT.Player('player', {
@@ -210,73 +183,64 @@
                     'onReady': (e) => e.target.setVolume(15),
                     'onStateChange': (e) => { 
                         if(e.data === 1) {
-                            const d = yt.getVideoData();
-                            document.getElementById('hud-title').innerText = d.title.toUpperCase();
-                            document.getElementById('play-main').innerText = '⏸';
-                            setInterval(updateProg, 500);
+                            document.getElementById('track-name').innerText = yt.getVideoData().title.toUpperCase();
+                            document.getElementById('m-play').innerText = '⏸';
+                            setInterval(update, 500);
                         }
+                        if(e.data === 0 && isLooping) { yt.playVideo(); }
                     }
                 }
             });
         }
 
-        function changeBG(file, el) {
-            const video = document.getElementById('video-bg');
-            const source = document.getElementById('bg-source');
-            document.querySelectorAll('.v-opt').forEach(opt => opt.classList.remove('active'));
-            el.classList.add('active');
-            
-            source.src = file;
-            video.load();
-            video.play().catch(e => console.log("File load blocked."));
+        function toggleLoop() {
+            isLooping = !isLooping;
+            document.getElementById('loop-btn').style.color = isLooping ? 'var(--accent)' : '#333';
+            document.getElementById('loop-stat').innerText = isLooping ? 'LOOP ENGINE: ACTIVE' : 'LOOP ENGINE: IDLE';
         }
 
-        function formatTime(s) {
+        function update() {
+            if (yt && yt.getCurrentTime) {
+                const c = yt.getCurrentTime(), t = yt.getDuration();
+                document.getElementById('scrub').max = t;
+                document.getElementById('scrub').value = c;
+                document.getElementById('c-time').innerText = fmt(c);
+                document.getElementById('t-time').innerText = fmt(t);
+            }
+        }
+
+        function fmt(s) {
             const m = Math.floor(s/60), sc = Math.floor(s%60);
             return `${m}:${sc < 10 ? '0' : ''}${sc}`;
         }
 
-        function updateProg() {
-            if (yt && yt.getCurrentTime) {
-                const c = yt.getCurrentTime(), t = yt.getDuration();
-                document.getElementById('seek').max = t;
-                document.getElementById('seek').value = c;
-                document.getElementById('time-curr').innerText = formatTime(c);
-                document.getElementById('time-total').innerText = formatTime(t);
-            }
-        }
+        async function startSearch(q) {
+            const vidMatch = q.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+            if(vidMatch) { yt.loadVideoById(vidMatch[1]); return; }
 
-        async function smartLoad(input) {
-            const vidMatch = input.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
-            if(vidMatch) yt.loadVideoById(vidMatch[1]);
-            else search(input);
-        }
-
-        async function search(q) {
-            for (let base of instances) {
+            for (let b of bases) {
                 try {
-                    const res = await fetch(`${base}/search?q=${encodeURIComponent(q)}&filter=music_songs`);
-                    const data = await res.json();
-                    const grid = document.getElementById('main-grid');
-                    grid.innerHTML = '';
-                    data.items.slice(0, 10).forEach(s => {
-                        const card = document.createElement('div');
-                        card.className = 'song-card';
-                        card.onclick = () => { yt.loadVideoById(s.url.split('v=')[1]); document.getElementById('hud-art').src = s.thumbnail; };
-                        card.innerHTML = `<img src="${s.thumbnail}"><div>${s.title}</div>`;
-                        grid.appendChild(card);
+                    const r = await fetch(`${b}/search?q=${encodeURIComponent(q)}&filter=music_songs`);
+                    const d = await r.json();
+                    const g = document.getElementById('grid');
+                    g.innerHTML = '';
+                    d.items.slice(0, 12).forEach(i => {
+                        const div = document.createElement('div');
+                        div.className = 'card';
+                        div.onclick = () => { yt.loadVideoById(i.url.split('v=')[1]); document.getElementById('track-art').src = i.thumbnail; };
+                        div.innerHTML = `<img src="${i.thumbnail}"><div class="card-info">${i.title}</div>`;
+                        g.appendChild(div);
                     });
                     return;
                 } catch(e) { continue; }
             }
         }
 
-        function togglePlay() { yt.getPlayerState() === 1 ? yt.pauseVideo() : yt.playVideo(); }
-        function setVol(v) { yt.setVolume(v); document.getElementById('v-num').innerText = v; }
+        function toggleP() { yt.getPlayerState() === 1 ? yt.pauseVideo() : yt.playVideo(); }
+        function setV(v) { yt.setVolume(v); document.getElementById('v-val').innerText = v; }
         function seek(v) { yt.seekTo(v); }
-        function openM(id) { document.getElementById(id + '-modal').style.display = 'flex'; }
-        function closeM() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-        function updateUI(t, v) { if(t==='accent') document.documentElement.style.setProperty('--accent', v); }
+        function openM() { document.getElementById('credits').style.display = 'flex'; }
+        function closeM() { document.getElementById('credits').style.display = 'none'; }
     </script>
 </body>
 </html>
