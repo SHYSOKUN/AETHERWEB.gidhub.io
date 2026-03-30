@@ -4,23 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aether WEBPLAYER</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root { 
             --accent: #ff0033; 
-            --ui-bg: rgba(0, 0, 0, 0.7); /* Thinned for visibility */
-            --font-main: 'Inter', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
+            --ui-bg: rgba(0, 0, 0, 0.6); 
         }
         
+        /* NO BLACK BACKGROUND - VIDEO ONLY */
         body, html { 
             margin: 0; padding: 0; height: 100vh; width: 100vw;
-            font-family: var(--font-main); color: white;
-            overflow: hidden; background: transparent; /* Removed black background */
+            font-family: 'Inter', sans-serif; color: white;
+            overflow: hidden; background: none; 
         }
 
-        /* --- FIXED & CENTERED VIDEO ENGINE --- */
         #video-container {
             position: fixed; inset: 0; width: 100vw; height: 100vh;
             z-index: -2; overflow: hidden; display: flex; align-items: center; justify-content: center;
@@ -29,75 +27,57 @@
         #video-bg {
             min-width: 100%; min-height: 100%; width: auto; height: auto;
             position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); /* Perfect Center Locking */
+            transform: translate(-50%, -50%);
             object-fit: cover;
-            filter: brightness(0.5) contrast(1.1);
+            filter: brightness(0.6);
         }
 
-        /* HEADER */
         header { 
-            height: 90px; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            height: 80px; display: flex; align-items: center; justify-content: center;
+            padding: 0 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
             z-index: 100; position: relative;
         }
-        .logo { font-weight: 900; font-size: 24px; letter-spacing: -1px; }
-        .logo span { color: var(--accent); }
 
-        .search-container { flex: 1; max-width: 700px; margin: 0 30px; }
         .search-bar {
-            width: 100%; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.1);
-            padding: 15px 25px; color: white; font-family: var(--font-main);
-            font-size: 18px; font-weight: 600; border-radius: 10px; outline: none;
-            backdrop-filter: blur(10px); transition: 0.2s; box-sizing: border-box;
+            width: 700px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255,255,255,0.2);
+            padding: 14px 20px; color: white; font-size: 16px; border-radius: 8px; outline: none;
+            backdrop-filter: blur(10px); transition: 0.2s;
         }
-        .search-bar:focus { background: rgba(0,0,0,0.8); border-color: var(--accent); }
+        .search-bar:focus { border-color: var(--accent); background: rgba(0,0,0,0.8); }
 
-        /* GRID */
         .grid { 
-            position: absolute; top: 110px; bottom: 130px; left: 0; right: 0;
+            position: absolute; top: 100px; bottom: 120px; left: 0; right: 0;
             padding: 0 40px; display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 25px; overflow-y: auto; scrollbar-width: none;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+            gap: 20px; overflow-y: auto; scrollbar-width: none;
         }
-        .card { cursor: pointer; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(5px); transition: 0.2s; }
-        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.8; }
-        .card-info { padding: 15px; font-size: 16px; font-weight: 700; color: #fff; }
+        .card { cursor: pointer; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
+        .card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+        .card-info { padding: 10px; font-size: 14px; font-weight: 700; }
 
-        /* FOOTER */
         footer {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 115px;
-            background: var(--ui-bg); border-top: 2px solid var(--accent);
-            display: grid; grid-template-columns: 350px 1fr 350px;
-            align-items: center; padding: 0 40px; box-sizing: border-box; backdrop-filter: blur(20px);
+            position: fixed; bottom: 0; width: 100%; height: 110px;
+            background: var(--ui-bg); border-top: 1px solid var(--accent);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; box-sizing: border-box; backdrop-filter: blur(20px);
         }
 
-        .track-cell { display: flex; align-items: center; gap: 18px; min-width: 0; }
-        #track-art { width: 70px; height: 70px; border-radius: 6px; border: 1px solid var(--accent); flex-shrink: 0; }
-        #track-name { font-size: 19px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .t-info { display: flex; align-items: center; gap: 15px; width: 300px; }
+        #track-art { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; }
+        #track-name { font-size: 16px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .control-cell { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .btn-group { display: flex; align-items: center; gap: 40px; }
-        .ctrl-btn { background: none; border: none; color: #aaa; font-weight: 800; cursor: pointer; font-size: 13px; text-transform: uppercase; }
-        .play-btn { width: 60px; height: 60px; border-radius: 50%; background: #fff; color: #000; font-size: 24px; border: none; cursor: pointer; }
-        .play-btn:hover { background: var(--accent); color: white; transform: scale(1.1); }
-        .active { color: var(--accent) !important; }
+        .controls { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .p-btn { width: 50px; height: 50px; border-radius: 50%; background: #fff; color: #000; border: none; cursor: pointer; font-size: 20px; }
+        .p-btn:hover { background: var(--accent); color: #fff; }
+        
+        #scrub { width: 100%; max-width: 500px; accent-color: var(--accent); cursor: pointer; }
 
-        .progress-wrap { width: 100%; max-width: 600px; display: flex; align-items: center; gap: 15px; font-family: var(--font-mono); font-size: 12px; color: #888; }
-        #scrub { flex: 1; accent-color: var(--accent); cursor: pointer; }
-
-        .vol-cell { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
-        #v-val { font-family: var(--font-mono); color: var(--accent); font-size: 28px; font-weight: 900; min-width: 45px; text-align: right; }
-
-        /* SETTINGS */
-        #settings-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
-        .s-box { width: 450px; background: #0a0a0a; border: 1px solid var(--accent); border-radius: 15px; padding: 30px; }
-        .s-row { margin-bottom: 25px; }
-        .s-label { display: block; font-size: 11px; font-weight: 900; color: #666; margin-bottom: 10px; }
-        .s-close { width: 100%; padding: 15px; background: var(--accent); border: none; color: white; font-weight: 900; cursor: pointer; border-radius: 8px; }
+        .vol { width: 300px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+        #v-val { font-weight: 900; color: var(--accent); min-width: 30px; }
     </style>
 </head>
-<body onclick="forceStart()">
+<body onclick="unlock()">
 
     <div id="video-container">
         <video autoplay muted loop playsinline id="video-bg">
@@ -106,87 +86,92 @@
     </div>
 
     <header>
-        <div class="logo">AETHER<span>WEBPLAYER</span></div>
-        <div class="search-container">
-            <input type="text" class="search-bar" id="mainSearch" placeholder="Search or Paste URL..." onkeydown="if(event.key==='Enter') smartSearch(this.value)">
-        </div>
-        <button class="ctrl-btn" style="color:white" onclick="toggleSettings(true)">[ SETTINGS ]</button>
+        <input type="text" class="search-bar" id="mSearch" placeholder="Paste Song URL or Type Name..." onkeydown="if(event.key==='Enter') handle(this.value)">
     </header>
 
     <div class="grid" id="grid"></div>
 
     <footer>
-        <div class="track-cell">
+        <div class="t-info">
             <img id="track-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-            <div style="min-width: 0;">
-                <div id="track-name">SIGNAL_IDLE</div>
-                <div style="color:var(--accent); font-size:11px; font-weight:900;">CONNECTION_LIVE</div>
-            </div>
+            <div id="track-name">Aether Player</div>
         </div>
 
-        <div class="control-cell">
-            <div class="btn-group">
-                <button class="ctrl-btn" onclick="yt.previousVideo()">PREV</button>
-                <button class="play-btn" id="m-play" onclick="toggleP()">▶</button>
-                <button class="ctrl-btn" id="loop-btn" onclick="toggleLoop()">LOOP</button>
-                <button class="ctrl-btn" onclick="yt.nextVideo()">NEXT</button>
+        <div class="controls">
+            <div style="display:flex; gap:30px; align-items:center;">
+                <button onclick="yt.previousVideo()" style="background:none; border:none; color:#888; cursor:pointer; font-weight:bold;">PREV</button>
+                <button class="p-btn" id="m-play" onclick="toggleP()">▶</button>
+                <button onclick="yt.nextVideo()" style="background:none; border:none; color:#888; cursor:pointer; font-weight:bold;">NEXT</button>
             </div>
-            <div class="progress-wrap">
-                <span id="c-time">00:00</span>
-                <input type="range" id="scrub" value="0" step="1" oninput="seek(this.value)">
-                <span id="t-time">00:00</span>
-            </div>
+            <input type="range" id="scrub" value="0" step="1" oninput="seek(this.value)">
         </div>
 
-        <div class="vol-cell">
-            <div id="v-val">15</div>
-            <input type="range" oninput="setV(this.value)" value="15" min="0" max="100" style="width:110px; accent-color:var(--accent);">
+        <div class="vol">
+            <span id="v-val">20</span>
+            <input type="range" oninput="setV(this.value)" value="20" min="0" max="100" style="accent-color:var(--accent);">
         </div>
     </footer>
 
-    <div id="settings-modal">
-        <div class="s-box">
-            <h2 style="margin-top:0">SYSTEM SETTINGS</h2>
-            <div class="s-row">
-                <span class="s-label">Video Brightness</span>
-                <input type="range" min="10" max="100" value="50" oninput="adj(this.value)" style="width:100%; accent-color:var(--accent);">
-            </div>
-            <div class="s-row">
-                <span class="s-label">UI Opacity</span>
-                <input type="range" min="20" max="100" value="70" oninput="setUI(this.value)" style="width:100%; accent-color:var(--accent);">
-            </div>
-            <button class="s-close" onclick="toggleSettings(false)">SAVE</button>
-        </div>
-    </div>
-
-    <div id="yt-api" style="position: absolute; top: -9999px;"><div id="player"></div></div>
+    <div id="player" style="position:absolute; top:-999px;"></div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let yt, isLooping = false;
-        function forceStart() { document.querySelector('video').play().catch(e=>{}); }
+        let yt, unlocked = false;
+
+        function unlock() {
+            if(!unlocked) {
+                document.getElementById('video-bg').play();
+                if(yt && yt.playVideo) yt.playVideo();
+                unlocked = true;
+            }
+        }
+
         function onYouTubeIframeAPIReady() {
             yt = new YT.Player('player', {
-                height: '0', width: '0', playerVars: { 'autoplay': 1, 'controls': 0 },
-                events: { 'onReady': (e) => e.target.setVolume(15), 'onStateChange': onPlayerStateChange }
+                height: '0', width: '0',
+                playerVars: { 'autoplay': 1, 'controls': 0, 'enablejsapi': 1, 'rel': 0 },
+                events: { 
+                    'onReady': (e) => { e.target.setVolume(20); }, 
+                    'onStateChange': (e) => {
+                        if(e.data === 1) {
+                            document.getElementById('track-name').innerText = yt.getVideoData().title;
+                            document.getElementById('m-play').innerText = '⏸';
+                            setInterval(() => {
+                                document.getElementById('scrub').max = yt.getDuration();
+                                document.getElementById('scrub').value = yt.getCurrentTime();
+                            }, 500);
+                        } else {
+                            document.getElementById('m-play').innerText = '▶';
+                        }
+                    }
+                }
             });
         }
-        function onPlayerStateChange(e) {
-            if(e.data === 1) { 
-                document.getElementById('track-name').innerText = yt.getVideoData().title.toUpperCase(); 
-                document.getElementById('m-play').innerText = '⏸'; 
-                setInterval(upd, 500); 
+
+        function handle(val) {
+            if(!val) return;
+            const id = extract(val);
+            if(id) {
+                yt.loadVideoById(id);
+                document.getElementById('track-art').src = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+            } else {
+                search(val);
             }
-            if(e.data === 0 && isLooping) yt.playVideo();
+            document.getElementById('mSearch').value = '';
         }
-        async function smartSearch(q) {
-            if(!q) return;
-            let query = q;
-            if (q.includes("https://open.spotify.com/intl-de/track/6lanRgr6wXibZr8KgzXxBl?si=84ae77d486fc4c88")) query = "Akatsuki Theme HQ";
-            const r = await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(query)}&filter=music_songs`);
+
+        function extract(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        async function search(q) {
+            const r = await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(q)}&filter=music_songs`);
             const d = await r.json();
             if(d.items && d.items.length > 0) {
-                yt.loadVideoById(d.items[0].url.split('v=')[1]);
+                const id = d.items[0].url.split('v=')[1];
+                yt.loadVideoById(id);
                 document.getElementById('track-art').src = d.items[0].thumbnail;
                 const g = document.getElementById('grid'); g.innerHTML = '';
                 d.items.slice(0, 12).forEach(i => {
@@ -195,24 +180,12 @@
                     div.innerHTML = `<img src="${i.thumbnail}"><div class="card-info">${i.title}</div>`;
                     g.appendChild(div);
                 });
-                document.getElementById('mainSearch').value = '';
             }
         }
-        function adj(v) { document.getElementById('video-bg').style.filter = `brightness(${v/100}) contrast(1.1)`; }
-        function setUI(v) { document.documentElement.style.setProperty('--ui-bg', `rgba(0,0,0,${v/100})`); }
-        function toggleSettings(s) { document.getElementById('settings-modal').style.display = s ? 'flex' : 'none'; }
-        function toggleLoop() { isLooping = !isLooping; document.getElementById('loop-btn').classList.toggle('active', isLooping); }
+
         function toggleP() { yt.getPlayerState() === 1 ? yt.pauseVideo() : yt.playVideo(); }
         function setV(v) { yt.setVolume(v); document.getElementById('v-val').innerText = v; }
         function seek(v) { yt.seekTo(v); }
-        function upd() { 
-            if (yt && yt.getCurrentTime) {
-                const c = yt.getCurrentTime(), t = yt.getDuration();
-                document.getElementById('scrub').max = t; document.getElementById('scrub').value = c;
-                document.getElementById('c-time').innerText = fmt(c); document.getElementById('t-time').innerText = fmt(t);
-            }
-        }
-        function fmt(s) { const m = Math.floor(s/60), sc = Math.floor(s%60); return `${m}:${sc < 10 ? '0' : ''}${sc}`; }
     </script>
 </body>
 </html>
