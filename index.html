@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Aether WEBPLAYER</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;700&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
     
     <style>
         :root { 
-            --accent: #9d50bb; 
-            --bg-opacity: 0.2; 
-            --glow: 12px;
-            --glass-blur: 10px;
-            --font-header: 'Bebas Neue', sans-serif;
-            --font-ui: 'Outfit', sans-serif;
+            --accent: #ffffff; 
+            --bg-dim: rgba(0, 0, 0, 0.15); 
+            --font-title: 'Playfair Display', serif;
+            --font-ui: 'Noto Sans JP', sans-serif;
         }
         
         body, html { 
@@ -21,76 +19,72 @@
             overflow: hidden; background: #000;
         }
 
-        /* SCANLINE EFFECT */
-        body::before {
-            content: " ";
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            z-index: 10; background-size: 100% 4px, 3px 100%; pointer-events: none;
-        }
-
+        /* FULLSCREEN ANIME BACKGROUND */
         #video-bg {
-            position: fixed; top: 50%; left: 50%;
-            min-width: 100%; min-height: 100%;
-            z-index: -10; transform: translate(-50%, -50%);
-            object-fit: cover;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1; object-fit: cover;
         }
 
         .app-container {
-            display: grid; grid-template-rows: 1fr 100px; height: 100vh;
-            background: rgba(0, 0, 0, var(--bg-opacity)); 
-            backdrop-filter: blur(var(--glass-blur));
-            position: relative; z-index: 1;
+            display: grid; grid-template-rows: 1fr 120px; height: 100vh;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, transparent 50%, rgba(0,0,0,0.6) 100%);
+            position: relative; z-index: 10;
         }
 
-        main { padding: 30px; overflow-y: auto; scrollbar-width: none; }
+        main { padding: 50px; overflow-y: auto; scrollbar-width: none; }
 
+        /* MINIMALIST ANIME LOGO */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
         .logo { 
-            font-family: var(--font-header); font-size: 42px; letter-spacing: 4px; font-style: italic;
-            color: var(--accent); text-shadow: 0 0 var(--glow) var(--accent);
+            font-family: var(--font-title); font-size: 48px; font-style: italic;
+            border-bottom: 2px solid white; line-height: 1; padding-bottom: 5px;
         }
 
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-
+        /* CLEAN SEARCH */
+        .search-container { max-width: 600px; margin-bottom: 50px; }
         .search-bar { 
-            display: flex; gap: 10px; margin-bottom: 30px; background: rgba(255,255,255,0.05); 
-            padding: 12px; border-radius: 4px; border-left: 4px solid var(--accent);
+            display: flex; border-bottom: 1px solid rgba(255,255,255,0.5); 
+            padding: 10px 0; transition: 0.3s;
         }
-        .search-bar input { background: transparent; border: none; color: white; flex: 1; outline: none; font-family: var(--font-ui); }
+        .search-bar:focus-within { border-bottom: 1px solid white; }
+        .search-bar input { 
+            background: transparent; border: none; color: white; flex: 1; 
+            font-size: 18px; outline: none; font-weight: 300;
+        }
+        .search-btn { background: transparent; border: none; color: white; cursor: pointer; font-size: 14px; letter-spacing: 2px; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
-        .card { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 0; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.1); }
-        .card:hover { border: 1px solid var(--accent); background: rgba(255,255,255,0.15); transform: translateY(-3px); }
-        .card img { width: 100%; aspect-ratio: 1; object-fit: cover; }
-        .card div { font-family: var(--font-ui); font-size: 11px; text-transform: uppercase; margin-top: 8px; letter-spacing: 1px; }
+        /* GRID - POSTER STYLE */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 30px; }
+        .card { cursor: pointer; transition: 0.4s; position: relative; }
+        .card:hover { transform: scale(1.05); }
+        .card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .card div { margin-top: 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; opacity: 0.9; }
 
+        /* ANIME HUD */
         footer { 
-            background: rgba(0,0,0,0.95); border-top: 2px solid var(--accent);
-            display: grid; grid-template-columns: 1fr 2fr 1.2fr; align-items: center; padding: 0 30px; z-index: 20;
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 0 60px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
         }
+
+        .now-playing { display: flex; align-items: center; gap: 20px; width: 300px; }
+        #hud-art { width: 60px; height: 60px; object-fit: cover; border-radius: 50%; border: 2px solid white; }
+        #hud-title { font-family: var(--font-title); font-size: 20px; font-style: italic; }
+
+        .player-controls { display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 1; }
+        .play-btn { background: white; color: black; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; cursor: pointer; transition: 0.2s; }
+        .play-btn:hover { transform: scale(1.1); }
         
-        #hud-title { font-family: var(--font-header); font-size: 20px; color: var(--accent); }
-        #hud-artist { font-family: var(--font-ui); font-size: 10px; text-transform: uppercase; opacity: 0.6; }
+        .progress-container { width: 100%; display: flex; align-items: center; gap: 15px; font-size: 12px; }
+        #seek { flex: 1; height: 2px; accent-color: white; cursor: pointer; }
 
-        .main-btn { background: var(--accent); color: white; border: none; width: 45px; height: 45px; cursor: pointer; font-size: 20px; transform: skewX(-10deg); }
+        .right-tools { display: flex; align-items: center; gap: 25px; width: 300px; justify-content: flex-end; }
+        .loop-btn { background: transparent; border: 1px solid white; color: white; border-radius: 20px; padding: 5px 15px; font-size: 10px; cursor: pointer; transition: 0.3s; }
+        .loop-active { background: white; color: black; }
 
-        /* MODAL FIX */
-        .modal-overlay { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); 
-            z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(15px);
-        }
-        .modal-box { background: #080808; border: 2px solid var(--accent); width: 450px; padding: 30px; position: relative; }
-        .modal-box h2 { font-family: var(--font-header); font-size: 38px; margin: 0 0 20px 0; color: var(--accent); }
-        .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 10px; }
-        .setting-row label { font-size: 12px; text-transform: uppercase; font-weight: 900; color: #888; }
-
-        .btn-action { 
-            font-family: var(--font-header); font-size: 18px; letter-spacing: 2px;
-            background: var(--accent); border: none; color: white; padding: 12px 25px; cursor: pointer; transform: skewX(-10deg);
-        }
-
-        input[type="range"] { accent-color: var(--accent); width: 120px; }
+        /* MODAL */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-box { width: 350px; text-align: center; border-top: 4px solid white; background: rgba(0,0,0,0.8); padding: 40px; }
     </style>
 </head>
 <body onclick="document.getElementById('video-bg').play()">
@@ -103,81 +97,74 @@
         <main>
             <div class="header">
                 <div class="logo">Aether WEBPLAYER</div>
-                <div style="display:flex; gap:25px;">
-                    <span style="cursor:pointer; font-size: 20px; opacity:0.7;" onclick="toggleModal('credits-modal')">CREDITS</span>
-                    <span style="cursor:pointer; font-size: 20px; color:var(--accent);" onclick="toggleModal('settings-modal')">SETTINGS</span>
+                <div style="display:flex; gap:30px;">
+                    <span style="cursor:pointer; font-size: 12px; letter-spacing: 2px;" onclick="openModal('credits')">CREDITS</span>
+                    <span style="cursor:pointer; font-size: 12px; letter-spacing: 2px;" onclick="openModal('settings')">SETTINGS</span>
                 </div>
             </div>
             
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="// LINK OR KEYWORD..." onkeydown="if(event.key==='Enter') smartLoad(this.value)">
-                <button class="btn-action" onclick="smartLoad(document.getElementById('search-input').value)">LOAD</button>
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search track or playlist..." onkeydown="if(event.key==='Enter') smartLoad(this.value)">
+                    <button class="search-btn" onclick="smartLoad(document.getElementById('search-input').value)">FIND</button>
+                </div>
             </div>
 
             <div class="grid" id="main-grid"></div>
         </main>
 
         <footer>
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <img id="hud-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="50" height="50">
-                <div>
-                    <div id="hud-title">IDLE_STATE</div>
-                    <div id="hud-artist">System Standing By</div>
+            <div class="now-playing">
+                <img id="hud-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+                <div style="overflow:hidden">
+                    <div id="hud-title">Title</div>
+                    <div id="hud-artist" style="font-size:11px; opacity:0.6;">Artist</div>
                 </div>
-            </div>
-            
-            <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
-                <div style="display:flex; gap:40px; align-items:center;">
-                    <button style="background:none; border:none; color:white; font-size:22px; cursor:pointer;" onclick="yt.previousVideo()">⏮</button>
-                    <button class="main-btn" id="play-main" onclick="togglePlay()">▶</button>
-                    <button style="background:none; border:none; color:white; font-size:22px; cursor:pointer;" onclick="yt.nextVideo()">⏭</button>
-                </div>
-                <input type="range" id="seek" style="width:100%" value="0" step="1" oninput="seek(this.value)">
             </div>
 
-            <div style="display:flex; justify-content:flex-end; align-items:center; gap:20px;">
-                <button id="loop-btn" style="background:none; border:none; color:white; font-size:22px; cursor:pointer; opacity:0.3;" onclick="toggleLoop()">🔁</button>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-family: var(--font-header); font-size:14px;">VOL</span>
-                    <input type="range" oninput="setVol(this.value)" value="10">
+            <div class="player-controls">
+                <div style="display:flex; gap:40px; align-items:center;">
+                    <button style="background:none; border:none; color:white; cursor:pointer;" onclick="yt.previousVideo()">PREV</button>
+                    <button class="play-btn" id="play-main" onclick="togglePlay()">▶</button>
+                    <button style="background:none; border:none; color:white; cursor:pointer;" onclick="yt.nextVideo()">NEXT</button>
+                </div>
+                <div class="progress-container">
+                    <span id="time-curr">0:00</span>
+                    <input type="range" id="seek" value="0" step="1" oninput="seek(this.value)">
+                    <span id="time-total">0:00</span>
+                </div>
+            </div>
+
+            <div class="right-tools">
+                <button id="loop-btn" class="loop-btn" onclick="toggleLoop()">LOOP: OFF</button>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-size:10px; opacity:0.5;">VOL</span>
+                    <input type="range" oninput="setVol(this.value)" value="15" style="width:70px; accent-color:white;">
                 </div>
             </div>
         </footer>
     </div>
 
-    <div id="settings-modal" class="modal-overlay">
+    <div id="settings-modal" class="modal">
         <div class="modal-box">
-            <h2>DOMAIN_SETTINGS</h2>
-            <div class="setting-row">
-                <label>Accent_Pulse</label>
-                <input type="color" value="#9d50bb" oninput="updateUI('accent', this.value)">
+            <h2 style="font-family:var(--font-title); font-style:italic;">Settings</h2>
+            <div style="display:flex; justify-content:space-between; margin:25px 0;">
+                <label style="font-size:11px; letter-spacing:1px;">UI OPACITY</label>
+                <input type="range" min="0" max="100" value="40" oninput="updateUI('opacity', this.value)">
             </div>
-            <div class="setting-row">
-                <label>Glow_Drive</label>
-                <input type="range" min="0" max="40" value="12" oninput="updateUI('glow', this.value)">
-            </div>
-            <div class="setting-row">
-                <label>UI_Visibility</label>
-                <input type="range" min="0" max="100" value="20" oninput="updateUI('opacity', this.value)">
-            </div>
-            <div class="setting-row">
-                <label>Playback_Speed</label>
-                <input type="range" min="50" max="200" value="100" oninput="updateUI('speed', this.value)">
-            </div>
-            <button class="btn-action" onclick="toggleModal('settings-modal')">SYNC_CLOSE</button>
+            <button class="search-btn" style="border:1px solid white; padding:10px 30px;" onclick="closeModal()">CLOSE</button>
         </div>
     </div>
 
-    <div id="credits-modal" class="modal-overlay">
+    <div id="credits-modal" class="modal">
         <div class="modal-box">
-            <h2>SYSTEM_CREDITS</h2>
-            <p style="font-size:12px; letter-spacing:1px; line-height:2;">
-                CORE: AETHER ENGINE v3.5<br>
-                UI: NEON SHONEN INTERFACE<br>
-                BG: JUJUTSU.MP4<br>
-                CODE: ADAPTIVE_AI_COLLAB
+            <h2 style="font-family:var(--font-title); font-style:italic;">Credits</h2>
+            <p style="font-size:12px; opacity:0.7; line-height:2;">
+                Aether Engine v5.0<br>
+                Visuals: jujutsu.mp4<br>
+                Aesthetic: Minimalist Anime Shell
             </p>
-            <button class="btn-action" onclick="toggleModal('credits-modal')">RETURN</button>
+            <button class="search-btn" style="border:1px solid white; padding:10px 30px;" onclick="closeModal()">BACK</button>
         </div>
     </div>
 
@@ -193,16 +180,16 @@
                 height: '0', width: '0',
                 playerVars: { 'autoplay': 1, 'controls': 0 },
                 events: { 
-                    'onReady': (e) => e.target.setVolume(10),
+                    'onReady': (e) => e.target.setVolume(15),
                     'onStateChange': (e) => { 
                         if(e.data === 1) {
                             const data = yt.getVideoData();
-                            document.getElementById('hud-title').innerText = data.title.toUpperCase();
-                            document.getElementById('hud-artist').innerText = data.author.toUpperCase();
+                            document.getElementById('hud-title').innerText = data.title;
+                            document.getElementById('hud-artist').innerText = data.author;
                             document.getElementById('play-main').innerText = '⏸';
                             setInterval(updateProg, 1000);
                         }
-                        if(e.data === 0 && isLooping) yt.playVideo(); 
+                        if(e.data === 0 && isLooping) yt.playVideo();
                     }
                 }
             });
@@ -210,10 +197,8 @@
 
         async function smartLoad(input) {
             if(!input) return;
-            const plMatch = input.match(/[?&]list=([^#\&\?]+)/);
             const vidMatch = input.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
-            if(plMatch) yt.loadPlaylist({listType: 'playlist', list: plMatch[1]});
-            else if(vidMatch) yt.loadVideoById(vidMatch[1]);
+            if(vidMatch) yt.loadVideoById(vidMatch[1]);
             else search(input);
         }
 
@@ -224,7 +209,7 @@
                     const data = await res.json();
                     const grid = document.getElementById('main-grid');
                     grid.innerHTML = '';
-                    data.items.slice(0, 12).forEach(s => {
+                    data.items.slice(0, 10).forEach(s => {
                         const card = document.createElement('div');
                         card.className = 'card';
                         card.onclick = () => yt.loadVideoById(s.url.split('v=')[1]);
@@ -236,27 +221,17 @@
             }
         }
 
-        function toggleModal(id) {
-            const m = document.getElementById(id);
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-        }
-
         function toggleLoop() {
             isLooping = !isLooping;
-            document.getElementById('loop-btn').style.opacity = isLooping ? "1" : "0.3";
-            document.getElementById('loop-btn').style.color = isLooping ? "var(--accent)" : "white";
+            const btn = document.getElementById('loop-btn');
+            btn.innerText = isLooping ? "LOOP: ON" : "LOOP: OFF";
+            btn.classList.toggle('loop-active', isLooping);
         }
 
         function togglePlay() { if(yt.getPlayerState() === 1) yt.pauseVideo(); else yt.playVideo(); }
-        
-        function updateUI(type, val) {
-            const root = document.documentElement;
-            if(type === 'accent') root.style.setProperty('--accent', val);
-            if(type === 'glow') root.style.setProperty('--glow', val + 'px');
-            if(type === 'opacity') root.style.setProperty('--bg-opacity', val/100);
-            if(type === 'speed') yt.setPlaybackRate(val/100);
-        }
-
+        function openModal(id) { document.getElementById(id + '-modal').style.display = 'flex'; }
+        function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+        function updateUI(type, val) { if(type === 'opacity') document.querySelector('footer').style.background = `rgba(0,0,0,${val/100})`; }
         function updateProg() { document.getElementById('seek').max = yt.getDuration(); document.getElementById('seek').value = yt.getCurrentTime(); }
         function setVol(v) { yt.setVolume(v); }
         function seek(v) { yt.seekTo(v); }
