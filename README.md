@@ -23,8 +23,8 @@ Open the webplayer in your browser, paste a valid audio URL into the input field
 
 💡 Future Improvements
 
- optimizations 
- Custom mp4 support over Url
- More settings 
- Bug and error fixes
- more later!
+ optimizations, 
+ Custom mp4 support over Url,
+ More settings,
+ Bug and error fixes,
+ More later.
