@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Aether WEBPLAYER</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;700&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Sans+JP:wght@300;500&display=swap" rel="stylesheet">
     
     <style>
         :root { 
-            --accent: #ffffff; 
-            --bg-dim: rgba(0, 0, 0, 0.15); 
-            --font-title: 'Playfair Display', serif;
+            --accent: #ff0000; 
+            --font-logo: 'Cinzel', serif;
             --font-ui: 'Noto Sans JP', sans-serif;
         }
         
@@ -19,127 +18,126 @@
             overflow: hidden; background: #000;
         }
 
-        /* FULLSCREEN ANIME BACKGROUND */
+        /* BACKGROUND ENGINE - FIXED FOR AUTOPLAY */
         #video-bg {
             position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1; object-fit: cover;
+            filter: brightness(0.4);
+            pointer-events: none;
         }
 
         .app-container {
             display: grid; grid-template-rows: 1fr 120px; height: 100vh;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, transparent 50%, rgba(0,0,0,0.6) 100%);
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.6) 100%);
             position: relative; z-index: 10;
         }
 
-        main { padding: 50px; overflow-y: auto; scrollbar-width: none; }
+        main { padding: 40px; overflow-y: auto; scrollbar-width: none; }
 
-        /* MINIMALIST ANIME LOGO */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .logo { 
-            font-family: var(--font-title); font-size: 48px; font-style: italic;
-            border-bottom: 2px solid white; line-height: 1; padding-bottom: 5px;
+            font-family: var(--font-logo); font-size: 42px; 
+            color: var(--accent); letter-spacing: 4px;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
         }
 
-        /* CLEAN SEARCH */
-        .search-container { max-width: 600px; margin-bottom: 50px; }
         .search-bar { 
-            display: flex; border-bottom: 1px solid rgba(255,255,255,0.5); 
-            padding: 10px 0; transition: 0.3s;
+            display: flex; border-bottom: 2px solid var(--accent); 
+            padding: 10px 0; max-width: 500px; margin-bottom: 40px;
         }
-        .search-bar:focus-within { border-bottom: 1px solid white; }
         .search-bar input { 
             background: transparent; border: none; color: white; flex: 1; 
-            font-size: 18px; outline: none; font-weight: 300;
+            font-size: 16px; outline: none;
         }
-        .search-btn { background: transparent; border: none; color: white; cursor: pointer; font-size: 14px; letter-spacing: 2px; }
+        .search-btn { background: var(--accent); border: none; color: white; cursor: pointer; padding: 5px 20px; font-family: var(--font-logo); }
 
-        /* GRID - POSTER STYLE */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 30px; }
-        .card { cursor: pointer; transition: 0.4s; position: relative; }
-        .card:hover { transform: scale(1.05); }
-        .card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .card div { margin-top: 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; opacity: 0.9; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        .card { cursor: pointer; transition: 0.2s; background: rgba(255,255,255,0.05); padding: 10px; }
+        .card:hover { background: rgba(255,0,0,0.1); border: 1px solid var(--accent); }
+        .card img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+        .card div { margin-top: 8px; font-size: 11px; text-transform: uppercase; overflow: hidden; height: 1.2em; }
 
-        /* ANIME HUD */
+        /* THE RED HUD */
         footer { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 0 60px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+            display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; 
+            padding: 0 40px; background: rgba(10, 0, 0, 0.98); 
+            border-top: 4px solid var(--accent);
+            box-shadow: 0 -10px 30px rgba(255,0,0,0.1);
         }
 
-        .now-playing { display: flex; align-items: center; gap: 20px; width: 300px; }
-        #hud-art { width: 60px; height: 60px; object-fit: cover; border-radius: 50%; border: 2px solid white; }
-        #hud-title { font-family: var(--font-title); font-size: 20px; font-style: italic; }
+        .track-info { display: flex; align-items: center; gap: 15px; }
+        #hud-art { width: 60px; height: 60px; border: 1px solid var(--accent); }
+        #hud-title { font-family: var(--font-logo); font-size: 18px; color: var(--accent); white-space: nowrap; }
 
-        .player-controls { display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 1; }
-        .play-btn { background: white; color: black; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; cursor: pointer; transition: 0.2s; }
-        .play-btn:hover { transform: scale(1.1); }
+        .controls { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .play-btn { background: var(--accent); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; }
         
-        .progress-container { width: 100%; display: flex; align-items: center; gap: 15px; font-size: 12px; }
-        #seek { flex: 1; height: 2px; accent-color: white; cursor: pointer; }
+        .progress-wrap { width: 100%; display: flex; align-items: center; gap: 10px; font-size: 10px; font-family: monospace; }
+        #seek { flex: 1; accent-color: var(--accent); cursor: pointer; height: 2px; }
 
-        .right-tools { display: flex; align-items: center; gap: 25px; width: 300px; justify-content: flex-end; }
-        .loop-btn { background: transparent; border: 1px solid white; color: white; border-radius: 20px; padding: 5px 15px; font-size: 10px; cursor: pointer; transition: 0.3s; }
-        .loop-active { background: white; color: black; }
+        .ops { display: flex; align-items: center; gap: 20px; justify-content: flex-end; }
+        .loop-btn { background: none; border: 1px solid #333; color: white; padding: 5px 12px; font-size: 10px; cursor: pointer; }
+        .loop-active { border-color: var(--accent); color: var(--accent); text-shadow: 0 0 5px var(--accent); }
 
-        /* MODAL */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-box { width: 350px; text-align: center; border-top: 4px solid white; background: rgba(0,0,0,0.8); padding: 40px; }
+        /* SETTINGS & CREDITS */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-box { width: 380px; background: #050000; border: 2px solid var(--accent); padding: 30px; }
+        .modal-box h2 { font-family: var(--font-logo); color: var(--accent); margin-top: 0; }
+        .setting-item { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #1a0000; padding-bottom: 10px; }
     </style>
 </head>
-<body onclick="document.getElementById('video-bg').play()">
+<body onclick="wakeEngine()">
 
-    <video id="video-bg" loop muted playsinline>
-        <source src="jujutsu.mp4" type="video/mp4">
+    <video id="video-bg" loop muted playsinline autoplay>
+        <source src="akatsuki.mp4" type="video/mp4">
     </video>
 
     <div class="app-container">
         <main>
             <div class="header">
                 <div class="logo">Aether WEBPLAYER</div>
-                <div style="display:flex; gap:30px;">
-                    <span style="cursor:pointer; font-size: 12px; letter-spacing: 2px;" onclick="openModal('credits')">CREDITS</span>
-                    <span style="cursor:pointer; font-size: 12px; letter-spacing: 2px;" onclick="openModal('settings')">SETTINGS</span>
+                <div style="display:flex; gap:25px;">
+                    <span style="cursor:pointer; font-size: 12px; font-family: var(--font-logo); opacity: 0.6;" onclick="modal('credits')">CREDITS</span>
+                    <span style="cursor:pointer; font-size: 12px; font-family: var(--font-logo); color: var(--accent);" onclick="modal('settings')">SETTINGS</span>
                 </div>
             </div>
             
-            <div class="search-container">
-                <div class="search-bar">
-                    <input type="text" id="search-input" placeholder="Search track or playlist..." onkeydown="if(event.key==='Enter') smartLoad(this.value)">
-                    <button class="search-btn" onclick="smartLoad(document.getElementById('search-input').value)">FIND</button>
-                </div>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="SEARCH CLOUDS..." onkeydown="if(event.key==='Enter') smartLoad(this.value)">
+                <button class="search-btn" onclick="smartLoad(document.getElementById('search-input').value)">GO</button>
             </div>
 
             <div class="grid" id="main-grid"></div>
         </main>
 
         <footer>
-            <div class="now-playing">
+            <div class="track-info">
                 <img id="hud-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-                <div style="overflow:hidden">
-                    <div id="hud-title">Title</div>
-                    <div id="hud-artist" style="font-size:11px; opacity:0.6;">Artist</div>
+                <div>
+                    <div id="hud-title">UPLINK_READY</div>
+                    <div id="hud-artist" style="font-size:10px; opacity:0.4;">Waiting for command...</div>
                 </div>
             </div>
 
-            <div class="player-controls">
+            <div class="controls">
                 <div style="display:flex; gap:40px; align-items:center;">
-                    <button style="background:none; border:none; color:white; cursor:pointer;" onclick="yt.previousVideo()">PREV</button>
+                    <button style="background:none; border:none; color:white; cursor:pointer;" onclick="yt.previousVideo()">⏮</button>
                     <button class="play-btn" id="play-main" onclick="togglePlay()">▶</button>
-                    <button style="background:none; border:none; color:white; cursor:pointer;" onclick="yt.nextVideo()">NEXT</button>
+                    <button style="background:none; border:none; color:white; cursor:pointer;" onclick="yt.nextVideo()">⏭</button>
                 </div>
-                <div class="progress-container">
+                <div class="progress-wrap">
                     <span id="time-curr">0:00</span>
                     <input type="range" id="seek" value="0" step="1" oninput="seek(this.value)">
                     <span id="time-total">0:00</span>
                 </div>
             </div>
 
-            <div class="right-tools">
+            <div class="ops">
                 <button id="loop-btn" class="loop-btn" onclick="toggleLoop()">LOOP: OFF</button>
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <span style="font-size:10px; opacity:0.5;">VOL</span>
-                    <input type="range" oninput="setVol(this.value)" value="15" style="width:70px; accent-color:white;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:10px; color:var(--accent);">VOL</span>
+                    <input type="range" oninput="setVol(this.value)" value="15" style="width:70px; accent-color:var(--accent);">
                 </div>
             </div>
         </footer>
@@ -147,24 +145,28 @@
 
     <div id="settings-modal" class="modal">
         <div class="modal-box">
-            <h2 style="font-family:var(--font-title); font-style:italic;">Settings</h2>
-            <div style="display:flex; justify-content:space-between; margin:25px 0;">
-                <label style="font-size:11px; letter-spacing:1px;">UI OPACITY</label>
-                <input type="range" min="0" max="100" value="40" oninput="updateUI('opacity', this.value)">
+            <h2>SETTINGS</h2>
+            <div class="setting-item">
+                <label>ACCENT</label>
+                <input type="color" value="#ff0000" oninput="updateUI('accent', this.value)">
             </div>
-            <button class="search-btn" style="border:1px solid white; padding:10px 30px;" onclick="closeModal()">CLOSE</button>
+            <div class="setting-item">
+                <label>BRIGHTNESS</label>
+                <input type="range" min="0" max="100" value="40" oninput="updateUI('bright', this.value)">
+            </div>
+            <button class="search-btn" style="width:100%; padding:12px;" onclick="closeM()">CLOSE</button>
         </div>
     </div>
 
     <div id="credits-modal" class="modal">
         <div class="modal-box">
-            <h2 style="font-family:var(--font-title); font-style:italic;">Credits</h2>
-            <p style="font-size:12px; opacity:0.7; line-height:2;">
-                Aether Engine v5.0<br>
-                Visuals: jujutsu.mp4<br>
-                Aesthetic: Minimalist Anime Shell
+            <h2>CREDITS</h2>
+            <p style="font-size:11px; line-height:2.2; color: #888;">
+                CORE: AETHER ENGINE 7.0<br>
+                BG: AKATSUKI.MP4<br>
+                HUD: BLOOD CLOUD V3
             </p>
-            <button class="search-btn" style="border:1px solid white; padding:10px 30px;" onclick="closeModal()">BACK</button>
+            <button class="search-btn" style="width:100%; padding:12px;" onclick="closeM()">RETURN</button>
         </div>
     </div>
 
@@ -175,6 +177,11 @@
         let yt, isLooping = false;
         const instances = ["https://pipedapi.kavin.rocks", "https://api.piped.video"];
 
+        function wakeEngine() {
+            const v = document.getElementById('video-bg');
+            if(v.paused) v.play().catch(()=>{});
+        }
+
         function onYouTubeIframeAPIReady() {
             yt = new YT.Player('player', {
                 height: '0', width: '0',
@@ -183,13 +190,12 @@
                     'onReady': (e) => e.target.setVolume(15),
                     'onStateChange': (e) => { 
                         if(e.data === 1) {
-                            const data = yt.getVideoData();
-                            document.getElementById('hud-title').innerText = data.title;
-                            document.getElementById('hud-artist').innerText = data.author;
+                            const d = yt.getVideoData();
+                            document.getElementById('hud-title').innerText = d.title.toUpperCase();
+                            document.getElementById('hud-artist').innerText = d.author.toUpperCase();
                             document.getElementById('play-main').innerText = '⏸';
                             setInterval(updateProg, 1000);
                         }
-                        if(e.data === 0 && isLooping) yt.playVideo();
                     }
                 }
             });
@@ -229,9 +235,14 @@
         }
 
         function togglePlay() { if(yt.getPlayerState() === 1) yt.pauseVideo(); else yt.playVideo(); }
-        function openModal(id) { document.getElementById(id + '-modal').style.display = 'flex'; }
-        function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-        function updateUI(type, val) { if(type === 'opacity') document.querySelector('footer').style.background = `rgba(0,0,0,${val/100})`; }
+        function modal(id) { document.getElementById(id + '-modal').style.display = 'flex'; }
+        function closeM() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+        
+        function updateUI(type, val) { 
+            if(type === 'accent') document.documentElement.style.setProperty('--accent', val);
+            if(type === 'bright') document.getElementById('video-bg').style.filter = `brightness(${val/100})`;
+        }
+        
         function updateProg() { document.getElementById('seek').max = yt.getDuration(); document.getElementById('seek').value = yt.getCurrentTime(); }
         function setVol(v) { yt.setVolume(v); }
         function seek(v) { yt.seekTo(v); }
