@@ -6,30 +6,45 @@
     <style>
         :root { 
             --accent: #9d50bb; 
-            --bg-overlay: rgba(0, 0, 0, 0.7); 
+            --bg-overlay: rgba(0, 0, 0, 0.5); /* Thinner overlay so you can SEE the video */
             --text-main: #ffffff;
             --text-sub: #aaaaaa;
             --card-size: 170px;
-            --glass-blur: 15px;
+            --glass-blur: 12px;
         }
         
         body, html { 
             margin: 0; padding: 0; height: 100vh; width: 100vw;
             font-family: 'Inter', system-ui, sans-serif;
             color: var(--text-main);
-            overflow: hidden; background: #000;
+            overflow: hidden; background: #000; /* Fallback if video fails */
         }
 
-        /* FIXED VIDEO ENGINE */
+        /* THE MP4 ENGINE - FIXED */
         #video-bg {
-            position: fixed; inset: 0; width: 100%; height: 100%;
-            z-index: -1; object-fit: cover; filter: brightness(0.4) saturate(1.1);
-            pointer-events: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            width: auto; height: auto;
+            z-index: -2; /* Sent to the very back */
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: brightness(0.5) saturate(1.2);
+            display: block;
+        }
+
+        /* This layer sits BETWEEN the video and the UI to add depth */
+        .vignette {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%);
+            z-index: -1; pointer-events: none;
         }
 
         .app-container {
             display: grid; grid-template-rows: 1fr 100px; height: 100vh;
-            background: var(--bg-overlay); backdrop-filter: blur(var(--glass-blur));
+            background: var(--bg-overlay); /* Transparent glass layer */
+            backdrop-filter: blur(var(--glass-blur));
+            position: relative; z-index: 1;
         }
 
         main { padding: 30px; overflow-y: auto; scrollbar-width: none; }
@@ -43,54 +58,54 @@
         .search-bar input { background: transparent; border: none; color: white; flex: 1; outline: none; font-size: 16px; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-size), 1fr)); gap: 20px; }
-        .card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; cursor: pointer; transition: 0.3s; border: 1px solid transparent; }
-        .card:hover { border-color: var(--accent); background: rgba(255,255,255,0.08); transform: translateY(-5px); }
+        .card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; cursor: pointer; transition: 0.3s; }
+        .card:hover { border: 1px solid var(--accent); transform: translateY(-5px); background: rgba(255,255,255,0.1); }
         .card img { width: 100%; aspect-ratio: 1; border-radius: 10px; margin-bottom: 10px; }
 
         footer { 
-            background: rgba(0,0,0,0.95); border-top: 1px solid var(--accent);
-            display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; padding: 0 30px;
+            background: rgba(0,0,0,0.9); border-top: 1px solid var(--accent);
+            display: grid; grid-template-columns: 1.2fr 2fr 1fr; align-items: center; padding: 0 30px;
         }
         #hud-art { width: 60px; height: 60px; border-radius: 8px; border: 1px solid var(--accent); object-fit: cover; }
-
         .main-btn { background: var(--accent); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; }
 
-        /* SETTINGS & MODALS */
+        /* SETTINGS MODAL */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; }
-        .modal-box { background: #0f0f0f; border: 1px solid var(--accent); width: 450px; border-radius: 20px; padding: 30px; }
+        .modal-box { background: #0c0c0c; border: 1px solid var(--accent); width: 450px; border-radius: 24px; padding: 30px; }
         .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        .btn-action { background: var(--accent); border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-action { background: var(--accent); border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <video id="video-bg" autoplay muted loop playsinline>
+    <video id="video-bg" autoplay muted loop playsinline poster="fallback.jpg">
         <source id="bg-source" src="jujutsu.mp4" type="video/mp4">
     </video>
+    <div class="vignette"></div>
 
     <div class="app-container">
         <main>
             <div class="header">
                 <div class="logo">AETHER</div>
-                <div style="cursor:pointer; font-size: 24px;" onclick="openModal()">⚙️</div>
+                <div style="display:flex; gap:20px;">
+                    <span style="cursor:pointer; font-size: 24px;" onclick="openModal('cred')">📝</span>
+                    <span style="cursor:pointer; font-size: 24px;" onclick="openModal('set')">⚙️</span>
+                </div>
             </div>
             
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search song name or paste YouTube URL..." onkeydown="if(event.key==='Enter') smartLoad(this.value)">
-                <button class="btn-action" style="width:auto; margin:0;" onclick="smartLoad(document.getElementById('search-input').value)">GO</button>
+                <input type="text" id="search-input" placeholder="Search song or paste YouTube URL..." onkeydown="if(event.key==='Enter') smartLoad(this.value)">
+                <button class="btn-action" style="width:auto; margin:0;" onclick="smartLoad(document.getElementById('search-input').value)">LOAD</button>
             </div>
 
             <div class="grid" id="main-grid"></div>
         </main>
 
         <footer>
-            <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 15px;">
                 <img id="hud-art" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
                 <div style="overflow:hidden">
-                    <div id="hud-title" style="font-weight:bold; font-size:14px; white-space:nowrap;">Standing By</div>
+                    <div id="hud-title" style="font-weight:bold; white-space:nowrap;">Domain Idle</div>
                     <div id="hud-artist" style="font-size:12px; color:var(--text-sub);">Aether Engine</div>
                 </div>
             </div>
@@ -98,43 +113,40 @@
                 <button class="main-btn" id="play-main" onclick="togglePlay()">▶</button>
                 <input type="range" id="seek" style="width:100%" value="0" step="1" oninput="seek(this.value)">
             </div>
-            <div style="text-align:right;">
-                <input type="range" style="width:80px;" oninput="setVol(this.value)" value="80">
+            <div style="display:flex; justify-content: flex-end; align-items:center; gap:10px;">
+                <span>🔉</span>
+                <input type="range" style="width:80px;" oninput="setVol(this.value)" value="10">
             </div>
         </footer>
     </div>
 
     <div id="modal-overlay" class="modal">
         <div class="modal-box">
-            <div style="display:flex; gap:15px; margin-bottom:20px;">
-                <button onclick="showTab('set')" style="background:none; color:white; border:none; cursor:pointer; font-weight:bold;">Settings</button>
-                <button onclick="showTab('cred')" style="background:none; color:white; border:none; cursor:pointer; font-weight:bold;">Credits</button>
-            </div>
-
-            <div id="tab-set" class="tab-content active">
+            <div id="tab-set">
+                <h3 style="color:var(--accent); margin-top:0;">Domain Settings</h3>
                 <div class="setting-row">
                     <label>Accent Color</label>
-                    <input type="color" id="accent-color" oninput="updateUI('accent', this.value)">
+                    <input type="color" value="#9d50bb" oninput="updateUI('accent', this.value)">
                 </div>
                 <div class="setting-row">
-                    <label>Background MP4 URL</label>
-                    <input type="text" id="bg-input" placeholder="Paste .mp4 link..." style="background:#222; border:1px solid #444; color:white; padding:5px;">
+                    <label>UI Opacity</label>
+                    <input type="range" min="0" max="100" value="50" oninput="updateUI('opacity', this.value)">
+                </div>
+                <div class="setting-row">
+                    <label>Change MP4 URL</label>
+                    <input type="text" id="bg-input" placeholder="Paste .mp4 link..." style="background:#222; border:1px solid #444; color:white; padding:5px; border-radius:5px;">
                 </div>
                 <button class="btn-action" onclick="changeBackground()">Update Background</button>
             </div>
-
-            <div id="tab-cred" class="tab-content">
-                <p style="color:var(--text-sub); line-height:1.6;">
-                    <strong>Aether WEBPLAYER</strong><br>
-                    Engine: YouTube IFrame API<br>
-                    Developer: User & Gemini<br><br>
-                    <em>Text List:</em><br>
-                    - Domain Expansion: Active<br>
-                    - GitHub Hosting: Optimized<br>
-                    - Background: Dynamic MP4
+            <div id="tab-cred" style="display:none;">
+                <h3 style="color:var(--accent); margin-top:0;">Credits</h3>
+                <p style="font-size:14px; color:var(--text-sub);">
+                    Build: Aether Final<br>
+                    Engine: YouTube v3 API<br>
+                    Credits: [Insert your info here later]
                 </p>
             </div>
-            <button class="btn-action" style="background:#333;" onclick="closeModal()">CLOSE</button>
+            <button class="btn-action" style="background:#333; margin-top:20px;" onclick="closeModal()">EXIT</button>
         </div>
     </div>
 
@@ -149,22 +161,19 @@
             yt = new YT.Player('player', {
                 height: '0', width: '0',
                 playerVars: { 'autoplay': 1, 'controls': 0, 'origin': window.location.origin },
-                events: { 'onStateChange': (e) => { if(e.data === 1) setInterval(updateProgress, 1000); } }
+                events: { 
+                    'onReady': (e) => e.target.setVolume(10),
+                    'onStateChange': (e) => { if(e.data === 1) setInterval(updateProg, 1000); }
+                }
             });
         }
 
-        // SMART LOAD: Handles both search and direct links
         async function smartLoad(input) {
             if(!input) return;
-            // Check if input is a YouTube URL
             const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
             const match = input.match(ytRegex);
-            
-            if(match) {
-                playTrack(match[1], "Direct Stream", "YouTube Link", "");
-            } else {
-                search(input);
-            }
+            if(match) playTrack(match[1], "Direct Link", "YouTube", "");
+            else search(input);
         }
 
         async function search(q) {
@@ -178,7 +187,7 @@
                         const card = document.createElement('div');
                         card.className = 'card';
                         card.onclick = () => playTrack(s.url.split('v=')[1], s.title, s.uploaderName, s.thumbnail);
-                        card.innerHTML = `<img src="${s.thumbnail}"><div class="card-title">${s.title}</div>`;
+                        card.innerHTML = `<img src="${s.thumbnail}"><div style="font-weight:bold; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.title}</div>`;
                         grid.appendChild(card);
                     });
                     return;
@@ -200,7 +209,7 @@
             else { yt.playVideo(); document.getElementById('play-main').innerText = '⏸'; }
         }
 
-        function updateProgress() {
+        function updateProg() {
             document.getElementById('seek').max = yt.getDuration();
             document.getElementById('seek').value = yt.getCurrentTime();
         }
@@ -208,25 +217,23 @@
         function changeBackground() {
             const url = document.getElementById('bg-input').value;
             if(!url) return;
-            const video = document.getElementById('video-bg');
-            const source = document.getElementById('bg-source');
-            source.src = url;
-            video.load();
-            video.play();
+            document.getElementById('bg-source').src = url;
+            const v = document.getElementById('video-bg');
+            v.load(); v.play();
             localStorage.setItem('aether-bg', url);
         }
 
         function updateUI(type, val) {
             if(type === 'accent') document.documentElement.style.setProperty('--accent', val);
+            if(type === 'opacity') document.documentElement.style.setProperty('--bg-overlay', `rgba(0,0,0,${val/100})`);
         }
 
-        function openModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
+        function openModal(t) {
+            document.getElementById('modal-overlay').style.display = 'flex';
+            document.getElementById('tab-set').style.display = t === 'set' ? 'block' : 'none';
+            document.getElementById('tab-cred').style.display = t === 'cred' ? 'block' : 'none';
+        }
         function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
-        function showTab(t) {
-            document.getElementById('tab-set').classList.toggle('active', t === 'set');
-            document.getElementById('tab-cred').classList.toggle('active', t === 'cred');
-        }
-
         function setVol(v) { yt.setVolume(v); }
         function seek(v) { yt.seekTo(v); }
 
@@ -236,9 +243,10 @@
                 document.getElementById('bg-source').src = savedBg;
                 document.getElementById('video-bg').load();
             }
-            // Force play video on first click (browser requirement)
+            // CRITICAL: Force video to play on first click (Browser Autoplay Bypass)
             document.body.addEventListener('click', () => {
-                document.getElementById('video-bg').play();
+                const v = document.getElementById('video-bg');
+                v.play().catch(e => console.log("Video Play Blocked: User must interact first."));
             }, { once: true });
         };
     </script>
