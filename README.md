@@ -29,5 +29,6 @@ Open the webplayer in your browser, paste a valid audio URL into the input field
  Bug and error fixes,
  More later.
 
+ Phone  version  under : https://github.com/SHYSOKUN/AETHERWEBPH.gidhub.io 
 
 COPYRIGHT : AetherWave Technologies
