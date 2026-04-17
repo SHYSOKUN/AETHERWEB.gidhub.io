@@ -3,7 +3,7 @@
 
 Youtubes video player 7 but you have only sound and it is  not using 5000000000 TB RAM and we dont sucks at developerment at all like all by google do!
 
-Use it in firefox and use uBlock Origin ! we dont blokc ads if oyu use GoogleShit is you Problem not us!
+Use it in firefox and use uBlock Origin ! we dont Block ads if you use GoogleShit is you Problem not us!
 
 Have feedback, ideas, or found a bug?
 Reach out anytime:
